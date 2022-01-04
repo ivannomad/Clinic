@@ -8,7 +8,8 @@ public class Doctor extends User {
         this.specialization = specialization;
     }
 
-    public Doctor(String specialization) {
+    public Doctor() {
+        super();
         this.specialization = specialization;
     }
 

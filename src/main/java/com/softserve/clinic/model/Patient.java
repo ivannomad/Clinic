@@ -11,7 +11,8 @@ public class Patient extends User {
         this.date = date;
     }
 
-    public Patient(Date date) {
+    public Patient() {
+        super();
         this.date = date;
     }
 

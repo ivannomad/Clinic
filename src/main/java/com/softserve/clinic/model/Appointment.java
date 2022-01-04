@@ -16,7 +16,6 @@ public class Appointment {
         this.doctor_id = doctor_id;
         this.patient_id = patient_id;
     }
-
     public Appointment() {
         this.id = id;
         this.date = date;

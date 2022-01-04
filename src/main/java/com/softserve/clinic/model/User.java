@@ -29,6 +29,16 @@ public class User {
         this.contact_number = contact_number;
     }
 
+    @Override
+    public String toString() {
+        return super.toString()+"User{" +
+                "id=" + id +
+                ", name='" + username + '\'' +
+                ", first_name=" + first_name +'\'' +
+                ", second_name=" + second_name +'\'' +
+                '}';
+    }
+
     public int getId() {
         return id;
     }

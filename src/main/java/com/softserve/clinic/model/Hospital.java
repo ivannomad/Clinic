@@ -1,15 +1,20 @@
 package com.softserve.clinic.model;
 
-public class Hospital {
 
-    private  int id;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+
+@Entity
+public class Hospital {
+    @Id
+    private Long id;
     private String hospital_name;
     private String city;
     private String street;
     private String adress_number;
 
 
-    public Hospital(int id, String hospital_name, String city, String street, String adress_number) {
+    public Hospital(Long id, String hospital_name, String city, String street, String adress_number) {
         this.id = id;
         this.hospital_name = hospital_name;
         this.city = city;
@@ -25,11 +30,11 @@ public class Hospital {
         this.adress_number = adress_number;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

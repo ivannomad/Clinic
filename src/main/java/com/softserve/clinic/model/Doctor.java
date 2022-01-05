@@ -5,11 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -20,10 +17,25 @@ import java.util.Set;
 @Setter
 public class Doctor extends User {
 
-    @Column(name = "specialization", length = 64)
-    private String specialization;
-
     @OneToMany
     @JoinColumn(name = "id")
     private Set<Appointment> appointments;
+
+    @ManyToMany
+    @JoinTable(name = "doctors_hospitals",
+            joinColumns = @JoinColumn(name = "doctor_id"),
+            inverseJoinColumns = @JoinColumn (name = "hospitals_id"))
+    private Set<Hospital> hospitals = new HashSet<>();
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "doctors_specializations",
+            joinColumns = @JoinColumn(name = "doctor_id"),
+            inverseJoinColumns = @JoinColumn (name = "specializations_id"))
+    private Set<Specialization> specializations = new HashSet<>();
+
+    public void addSpec(Specialization specialization){
+        this.specializations.add(specialization);
+        specialization.getDoctor().add(this);
+    }
+
 }

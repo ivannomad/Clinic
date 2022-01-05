@@ -1,12 +1,15 @@
 package com.softserve.clinic.model;
 
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -15,7 +18,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class Hospital {
+public class Specialization {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -24,13 +27,11 @@ public class Hospital {
             strategy = "org.hibernate.id.UUIDGenerator"
     )
     private UUID id;
-    private String hospitalName;
-    private String city;
-    private String street;
-    private String addressNumber;
 
-    @ManyToMany(mappedBy = "hospitals")
-    private Set<Doctor> doctors = new HashSet<>();
+    private String name;
 
+    @ManyToMany(mappedBy = "specializations")
+    @JsonIgnore
+    private Set<Doctor> doctor = new HashSet<>();
 
 }

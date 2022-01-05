@@ -4,24 +4,27 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
-@Table(name = "doctors")
-@NoArgsConstructor
+@Table(name = "patients")
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-public class Doctor extends User {
+public class Patient extends User {
 
-    @Column(name = "specialization", length = 64)
-    private String specialization;
+    @Column(name = "birth_date")
+    private LocalDate birthDate;
 
     @OneToMany
     @JoinColumn(name = "id")

@@ -1,4 +1,5 @@
 package com.softserve.clinic.model;
 
-public class Role {
+public enum Role {
+    PATIENT, DOCTOR
 }

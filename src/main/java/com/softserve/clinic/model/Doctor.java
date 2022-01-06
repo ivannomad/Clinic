@@ -1,4 +1,41 @@
 package com.softserve.clinic.model;
 
-public class Doctor {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+
+@Entity
+@Table(name = "doctors")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class Doctor extends User {
+
+    @OneToMany
+    @JoinColumn(name = "id")
+    private Set<Appointment> appointments;
+
+    @ManyToMany
+    @JoinTable(name = "doctors_hospitals",
+            joinColumns = @JoinColumn(name = "doctor_id"),
+            inverseJoinColumns = @JoinColumn (name = "hospitals_id"))
+    private Set<Hospital> hospitals = new HashSet<>();
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "doctors_specializations",
+            joinColumns = @JoinColumn(name = "doctor_id"),
+            inverseJoinColumns = @JoinColumn (name = "specializations_id"))
+    private Set<Specialization> specializations = new HashSet<>();
+
+    public void addSpec(Specialization specialization){
+        this.specializations.add(specialization);
+        specialization.getDoctor().add(this);
+    }
+
 }

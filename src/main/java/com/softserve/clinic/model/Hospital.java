@@ -2,7 +2,6 @@ package com.softserve.clinic.model;
 
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -12,9 +11,9 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
+@Table(name = "hospitals")
 @Getter
 @Setter
-@NoArgsConstructor
 public class Hospital {
 
     @Id

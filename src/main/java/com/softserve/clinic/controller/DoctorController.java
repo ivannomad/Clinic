@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/doctors")
@@ -21,16 +22,18 @@ public class DoctorController {
     }
 
     @PostMapping
-    public Doctor createDoctor(DoctorDto newDoctor) {
-        Doctor doctor = new Doctor();
-        Specialization specialization = new Specialization();
-        specialization.setName(newDoctor.getSpecialization());
-        doctor.addSpec(specialization);
-        return doctorService.createDoctor(doctor);
+    public DoctorDto createDoctor(DoctorDto doctorDto) {
+        return doctorService.createDoctor(doctorDto);
     }
 
     @GetMapping
     public List<Doctor> getAllDoctors() {
         return doctorService.getAllDoctors();
     }
+
+    @GetMapping("/{id}")
+    public Doctor getDoctorById(UUID id) {
+        return doctorService.getDoctorById(id);
+    }
+
 }

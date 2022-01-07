@@ -28,7 +28,7 @@ public class Doctor extends User {
             inverseJoinColumns = @JoinColumn (name = "specializations_id"))
     private Set<Specialization> specializations = new HashSet<>();
 
-    public void addSpec(Specialization specialization){
+    public void addSpecialization(Specialization specialization){
         this.specializations.add(specialization);
         specialization.getDoctor().add(this);
     }

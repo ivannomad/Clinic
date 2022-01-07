@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/specialization")
+@RequestMapping("/specializations")
 @RequiredArgsConstructor
 public class SpecializationController {
 
@@ -34,7 +34,7 @@ public class SpecializationController {
     }
 
     @PutMapping("/{id}")
-    public void updateSpecialization(@RequestBody SpecializationDto specializationDto, @PathVariable UUID id) {
+    public void updateSpecialization(@RequestBody @Valid SpecializationDto specializationDto, @PathVariable UUID id) {
         specializationService.updateSpecialization(specializationDto, id);
     }
 

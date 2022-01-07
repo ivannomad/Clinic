@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,7 +55,7 @@ class SpecializationServiceImplTest {
 
         List<SpecializationDto> actual = testable.getAllSpecializations();
 
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -67,15 +67,15 @@ class SpecializationServiceImplTest {
 
         SpecializationDto actual = testable.getSpecializationById(specId);
 
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void shouldThrowsExceptionWhenGetSpecializationByWrongId() {
         when(specializationRepository.findById(specId)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> testable.getSpecializationById(specId));
-    }
+        assertThatThrownBy(() -> testable.getSpecializationById(specId)).isInstanceOf(EntityNotFoundException.class);
+   }
 
     @Test
     void shouldGetSpecializationByName() {
@@ -86,14 +86,14 @@ class SpecializationServiceImplTest {
 
         SpecializationDto actual = testable.getSpecializationByName(specName);
 
-        assertEquals(expected, actual);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void shouldThrowsExceptionWhenGetSpecializationByWrongName() {
         when(specializationRepository.findByName(specName)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> testable.getSpecializationByName(specName));
+        assertThatThrownBy(() -> testable.getSpecializationByName(specName)).isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
@@ -124,12 +124,10 @@ class SpecializationServiceImplTest {
 
     @Test
     void shouldThrowsExceptionWhenUpdateNotExistSpecialization() {
-        SpecializationDto expected = specializationDto;
-
-        when(specializationMapper.specDtoToSpec(expected)).thenReturn(specialization);
+        when(specializationMapper.specDtoToSpec(specializationDto)).thenReturn(specialization);
         when(specializationRepository.findById(specId)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> testable.updateSpecialization(expected, specId));
+        assertThatThrownBy(() -> testable.updateSpecialization(specializationDto, specId)).isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
@@ -145,6 +143,6 @@ class SpecializationServiceImplTest {
     void shouldThrowsExceptionWhenDeleteNotExistSpecialization() {
         when(specializationRepository.existsById(specId)).thenReturn(false);
 
-        assertThrows(EntityNotFoundException.class, () -> testable.deleteSpecialization(specId));
+        assertThatThrownBy(() -> testable.deleteSpecialization(specId)).isInstanceOf(EntityNotFoundException.class);
     }
 }

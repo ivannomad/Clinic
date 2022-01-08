@@ -1,6 +1,5 @@
 package com.softserve.clinic.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -15,7 +14,6 @@ import java.util.UUID;
 @Getter
 @Setter
 public class Specialization {
-
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(
@@ -24,10 +22,12 @@ public class Specialization {
     )
     private UUID id;
 
+    @Column(nullable = false, unique = true)
     private String name;
 
+    private String description;
+
     @ManyToMany(mappedBy = "specializations")
-    @JsonIgnore
     private Set<Doctor> doctor = new HashSet<>();
 
 }

@@ -8,7 +8,5 @@ import java.util.UUID;
 
 public interface HospitalRepository extends JpaRepository<Hospital, UUID> {
 
-    Optional<Hospital> findByName(String name);
-
-
+    Optional<Hospital> findByHospitalName(String name);
 }

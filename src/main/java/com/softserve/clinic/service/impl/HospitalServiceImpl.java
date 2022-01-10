@@ -53,7 +53,7 @@ public class HospitalServiceImpl implements HospitalService {
 
     @Override
     public HospitalDto getHospitalByName(String hospitalName) {
-        return hospitalRepository.findByName(hospitalName)
+        return hospitalRepository.findByHospitalName(hospitalName)
                 .map(hospitalMapper::hospitalToHospitalDto)
                 .orElseThrow(() -> new EntityNotFoundException("Hospital with name: " + hospitalName + " not found"));
     }

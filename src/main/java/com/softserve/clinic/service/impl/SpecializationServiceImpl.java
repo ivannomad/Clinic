@@ -28,17 +28,17 @@ public class SpecializationServiceImpl implements SpecializationService {
     }
 
     @Override
-    public SpecializationDto getSpecializationById(UUID id) {
-        return specializationRepository.findById(id)
+    public SpecializationDto getSpecializationById(UUID specId) {
+        return specializationRepository.findById(specId)
                 .map(specializationMapper::specToSpecDto)
-                .orElseThrow(() -> new EntityNotFoundException("Could not find specialization " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Unable to find Doctor with id " + specId));
     }
 
     @Override
-    public SpecializationDto getSpecializationByName(String name) {
-        return specializationRepository.findByName(name)
+    public SpecializationDto getSpecializationByName(String specName) {
+        return specializationRepository.findByName(specName)
                 .map(specializationMapper::specToSpecDto)
-                .orElseThrow(() -> new EntityNotFoundException("Could not find specialization " + name));
+                .orElseThrow(() -> new EntityNotFoundException("Could not find specialization " + specName));
     }
 
     @Override
@@ -48,19 +48,19 @@ public class SpecializationServiceImpl implements SpecializationService {
     }
 
     @Override
-    public void updateSpecialization(SpecializationDto specializationDto, UUID id) {
-        Specialization specialization = specializationMapper.specDtoToSpec(specializationDto);
-        specializationRepository.findById(id)
-                .map(spec -> specializationRepository.save(specialization))
-                .orElseThrow(() -> new EntityNotFoundException("Could not find specialization " + id));
+    public void updateSpecialization(SpecializationDto specializationDto, UUID specId) {
+        Specialization specialization = specializationRepository.findById(specId).orElseThrow(
+                () -> new EntityNotFoundException("Could not find specialization " + specId));
+        specializationMapper.updateSpecializationFromSpecializationDto(specializationDto, specialization);
+        specializationRepository.save(specialization);
     }
 
     @Override
-    public void deleteSpecialization(UUID id) {
-        if (specializationRepository.existsById(id)) {
-            specializationRepository.deleteById(id);
+    public void deleteSpecialization(UUID specId) {
+        if (specializationRepository.existsById(specId)) {
+            specializationRepository.deleteById(specId);
         } else {
-            throw new EntityNotFoundException("Could not find specialization" + id);
+            throw new EntityNotFoundException("Could not find specialization " + specId);
         }
     }
 }

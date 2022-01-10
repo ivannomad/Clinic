@@ -13,25 +13,15 @@ import java.util.Set;
 @Setter
 public class Doctor extends User {
 
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Appointment> appointments = new HashSet<>();
-
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "doctors_hospitals",
             joinColumns = @JoinColumn(name = "doctor_id"),
-            inverseJoinColumns = @JoinColumn (name = "hospitals_id"))
+            inverseJoinColumns = @JoinColumn(name = "hospitals_id"))
     private Set<Hospital> hospitals = new HashSet<>();
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "doctors_specializations",
             joinColumns = @JoinColumn(name = "doctor_id"),
-            inverseJoinColumns = @JoinColumn (name = "specializations_id"))
+            inverseJoinColumns = @JoinColumn(name = "specializations_id"))
     private Set<Specialization> specializations = new HashSet<>();
-
-    public void addSpecialization(Specialization specialization) {
-        this.specializations.add(specialization);
-        specialization.getDoctor().add(this);
-    }
-
-
 }

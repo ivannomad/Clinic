@@ -1,15 +1,15 @@
-package com.softserve.clinic.service;
+/*
+package com.softserve.clinic.service.impl;
 
 import com.softserve.clinic.dto.PatientDto;
 import com.softserve.clinic.mapper.PatientMapper;
 import com.softserve.clinic.model.Patient;
 import com.softserve.clinic.repository.PatientRepository;
-import com.softserve.clinic.service.impl.PatientServiceImpl;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,16 +17,10 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-
-@SpringBootTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class PatientServiceTest {
+@ExtendWith(MockitoExtension.class)
+class PatientServiceImplTest {
 
     @Mock
     private PatientRepository patientRepository;
@@ -83,4 +77,5 @@ class PatientServiceTest {
 
         verify(patientRepository, times(1)).deleteById(any());
     }
-}
+
+}*/

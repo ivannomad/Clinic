@@ -60,7 +60,6 @@ class DoctorServiceImplTest {
         doctor.setEmail(email);
         doctor.setContactNumber(contactNumber);
         doctor.setRole(null);
-        doctor.setAppointments(null);
         doctor.setHospitals(null);
         doctor.setSpecializations(null);
     }

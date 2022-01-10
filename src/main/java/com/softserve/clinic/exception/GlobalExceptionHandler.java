@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -32,11 +31,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return getResponseEntity(request, exception, HttpStatus.NOT_FOUND);
     }
 
+/*
     @ExceptionHandler(Exception.class)
-    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<ErrorDto> internalServerErrorHandler(HttpServletRequest request, Exception exception) {
         return getResponseEntity(request, exception, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+*/
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,

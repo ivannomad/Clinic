@@ -5,10 +5,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * @author <a href="mailto:info@olegorlov.com">Oleg Orlov</a>
- */
-
 @Data
 @Builder
 public class ErrorDto implements Serializable {

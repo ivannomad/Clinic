@@ -1,19 +1,19 @@
 package com.softserve.clinic.dto;
 
-import lombok.Data;
+import lombok.Value;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.UUID;
 
-@Data
+@Value
 public class PatientDto implements Serializable {
-    private final UUID id;
-    private final String username;
-    private final String password;
-    private final String firstName;
-    private final String secondName;
-    private final String email;
-    private final String contactNumber;
-    private final LocalDate birthDate;
+    UUID id;
+    String username;
+    String password;
+    String firstName;
+    String secondName;
+    String email;
+    String contactNumber;
+    LocalDate birthDate;
 }

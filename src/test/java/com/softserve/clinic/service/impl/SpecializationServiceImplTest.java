@@ -75,7 +75,7 @@ class SpecializationServiceImplTest {
         when(specializationRepository.findById(specId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> testable.getSpecializationById(specId)).isInstanceOf(EntityNotFoundException.class);
-   }
+    }
 
     @Test
     void shouldGetSpecializationByName() {

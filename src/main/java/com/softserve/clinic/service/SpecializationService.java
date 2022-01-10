@@ -9,14 +9,14 @@ public interface SpecializationService {
 
     List<SpecializationDto> getAllSpecializations();
 
-    SpecializationDto getSpecializationById(UUID id);
+    SpecializationDto getSpecializationById(UUID specId);
 
-    SpecializationDto getSpecializationByName(String name);
+    SpecializationDto getSpecializationByName(String specName);
 
     void createSpecialization(SpecializationDto specializationDto);
 
-    void updateSpecialization(SpecializationDto specializationDto, UUID id);
+    void updateSpecialization(SpecializationDto specializationDto, UUID specId);
 
-    void deleteSpecialization(UUID id);
+    void deleteSpecialization(UUID specId);
 
 }

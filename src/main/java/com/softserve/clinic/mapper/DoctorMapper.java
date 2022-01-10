@@ -11,4 +11,6 @@ public interface DoctorMapper {
 
     DoctorDto doctorToDoctorDto(Doctor doctor);
 
+    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+    void updateDoctorFromDoctorDto(DoctorDto doctorDto, @MappingTarget Doctor doctor);
 }

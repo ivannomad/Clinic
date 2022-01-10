@@ -1,38 +1,42 @@
 package com.softserve.clinic.repository;
 
-
 import com.softserve.clinic.model.Patient;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.jdbc.Sql;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@DataJpaTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class PatientRepositoryTest {
-    private final PatientRepository patientRepository;
 
-   PatientRepositoryTest(PatientRepository patientRepository) {
-        this.patientRepository = patientRepository;
+    @Autowired
+    private PatientRepository patientRepository;
+
+    @Test
+    void shouldSavePatient() {
+        Patient patient = new Patient();
+        patient.setFirstName("Klavdija");
+
+        patientRepository.save(patient);
+
+        assertNotNull(patient.getId());
     }
 
     @Test
-    void save() {
-       Patient patient = new Patient();
-       patient.setFirstName("Klavdija");
-       patientRepository.save(patient);
-       assertTrue(patient.getId()!=null);
-    }
+    void shouldUpdatePatient() {
+        Patient patient = new Patient();
+        patient.setFirstName("Klavdija");
 
-    @Sql(statements = "insert into users ('username','password', 'first_name'," +
-            " 'second_name', 'email', 'contact_number', 'role')" +
-            "values ('bg_zn', '123456', 'Bogdan', 'Zinovii', 'bg_zn@mail.com', '223145666', 'PATIENT ')")
-    @Test
-    void update() {
-       Patient actual =patientRepository.findByUsername("bg_zn");
-        assertNotNull(actual);
-        actual.setFirstName("Katerina");
-       Patient expected =patientRepository.save(actual);
-        assertNotNull(expected);
-        assertEquals(expected, actual);
+        patientRepository.save(patient);
+
+        patient.setFirstName("Denys");
+
+        Patient expected = patientRepository.save(patient);
+
+        assertEquals("Denys", expected.getFirstName());
     }
 }

@@ -75,7 +75,7 @@ class SpecializationServiceImplTest {
         when(specializationRepository.findById(specId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> testable.getSpecializationById(specId)).isInstanceOf(EntityNotFoundException.class);
-   }
+    }
 
     @Test
     void shouldGetSpecializationByName() {
@@ -111,20 +111,19 @@ class SpecializationServiceImplTest {
 
     @Test
     void shouldUpdateSpecialization() {
-        when(specializationMapper.specDtoToSpec(specializationDto)).thenReturn(specialization);
         when(specializationRepository.findById(specialization.getId())).thenReturn(Optional.of(specialization));
+        doNothing().when(specializationMapper).updateSpecializationFromSpecializationDto(specializationDto, specialization);
         when(specializationRepository.save(specialization)).thenReturn(specialization);
 
         testable.updateSpecialization(specializationDto, specId);
 
-        verify(specializationMapper, times(1)).specDtoToSpec(specializationDto);
         verify(specializationRepository, times(1)).findById(specialization.getId());
+        verify(specializationMapper, times(1)).updateSpecializationFromSpecializationDto(specializationDto, specialization);
         verify(specializationRepository, times(1)).save(specialization);
     }
 
     @Test
     void shouldThrowsExceptionWhenUpdateNotExistSpecialization() {
-        when(specializationMapper.specDtoToSpec(specializationDto)).thenReturn(specialization);
         when(specializationRepository.findById(specId)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> testable.updateSpecialization(specializationDto, specId)).isInstanceOf(EntityNotFoundException.class);

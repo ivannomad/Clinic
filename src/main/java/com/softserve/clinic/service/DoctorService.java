@@ -1,25 +1,29 @@
 package com.softserve.clinic.service;
 
+import com.softserve.clinic.dto.AppointmentDto;
 import com.softserve.clinic.dto.DoctorDto;
-import com.softserve.clinic.model.Doctor;
-import com.softserve.clinic.model.Specialization;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 public interface DoctorService {
-    DoctorDto createDoctor(DoctorDto doctorDto);
 
-    List<Doctor> getAllDoctors();
+    List<DoctorDto> getAllDoctors();
 
-    Doctor getDoctorById(UUID id);
+    DoctorDto getDoctorById(UUID doctorId);
 
-    void deleteDoctorById(UUID id);
+    void createDoctor(DoctorDto doctorDto);
 
-    Doctor getDoctorBySpecialization(UUID id);
+    void updateDoctorById(DoctorDto doctorDto, UUID doctorId);
 
-//    Doctor getAppointmentByDoctorId(UUID id);
+    void deleteDoctorById(UUID doctorId);
 
+    List<AppointmentDto> getDoctorSchedule(UUID doctorId);
+
+    List<AppointmentDto> getDoctorAppointments(UUID doctorId);
+
+    void createAppointment(UUID doctorId, LocalDateTime localDateTime);
 }
 
 

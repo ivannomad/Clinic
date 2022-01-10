@@ -9,6 +9,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.UUID;
 
@@ -51,7 +52,7 @@ class SpecializationControllerTest {
 
         when(specializationService.getSpecializationByName(NAME)).thenReturn(specializationDto);
 
-        mockMvc.perform(get("/specializations/{name}", NAME))
+        mockMvc.perform(get("/specializations/{specName}", NAME))
                 .andExpectAll(
                         status().isOk(),
                         content().contentType(MediaType.APPLICATION_JSON),
@@ -59,6 +60,14 @@ class SpecializationControllerTest {
                         jsonPath("$.name").value(NAME),
                         jsonPath("$.description").isString()
                 );
+    }
+
+    @Test
+    void shouldThrowsExceptionWhenEntityNotFound() throws Exception {
+        when(specializationService.getSpecializationByName(NAME)).thenThrow(EntityNotFoundException.class);
+
+        mockMvc.perform(get("/specializations/{specName}", NAME))
+                .andExpect(status().isNotFound());
     }
 
     @Test
@@ -79,7 +88,7 @@ class SpecializationControllerTest {
 
     @Test
     void shouldUpdateSpecialization() throws Exception {
-        mockMvc.perform(put("/specializations/{id}", ID)
+        mockMvc.perform(put("/specializations/{specId}", ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"Surgeon\"}"))
                 .andExpect(status().isOk());
@@ -87,7 +96,7 @@ class SpecializationControllerTest {
 
     @Test
     void updatingFailsWhenSpecializationNameNotGiven() throws Exception {
-        mockMvc.perform(put("/specializations/{id}", ID)
+        mockMvc.perform(put("/specializations/{specId}", ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\":\"\"}"))
                 .andExpect(status().isBadRequest());
@@ -96,7 +105,7 @@ class SpecializationControllerTest {
 
     @Test
     void shouldDeleteSpecialization() throws Exception {
-        mockMvc.perform(delete("/specializations/{id}", ID))
+        mockMvc.perform(delete("/specializations/{specId}", ID))
                 .andExpect(status().isNoContent());
     }
 }

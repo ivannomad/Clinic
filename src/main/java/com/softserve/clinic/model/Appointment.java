@@ -4,11 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -26,12 +22,13 @@ public class Appointment {
     )
     private UUID id;
 
+    @Column(nullable = false)
     private LocalDateTime dateAndTime;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Doctor doctor;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Patient patient;
 
 }

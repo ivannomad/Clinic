@@ -4,14 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
@@ -29,11 +22,22 @@ public class User {
     )
     private UUID id;
 
+    @Column(nullable = false, unique = true)
     private String username;
+
+    @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
     private String firstName;
+
+    @Column(nullable = false)
     private String secondName;
+
+    @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String contactNumber;
 
     @Enumerated(value = EnumType.STRING)

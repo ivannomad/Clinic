@@ -22,9 +22,9 @@ public class SpecializationController {
         return specializationService.getAllSpecializations();
     }
 
-    @GetMapping("/{name}")
-    public SpecializationDto getSpecializationByName(@PathVariable String name) {
-        return specializationService.getSpecializationByName(name);
+    @GetMapping("/{specName}")
+    public SpecializationDto getSpecializationByName(@PathVariable String specName) {
+        return specializationService.getSpecializationByName(specName);
     }
 
     @PostMapping
@@ -33,15 +33,15 @@ public class SpecializationController {
         specializationService.createSpecialization(specializationDto);
     }
 
-    @PutMapping("/{id}")
-    public void updateSpecialization(@RequestBody @Valid SpecializationDto specializationDto, @PathVariable UUID id) {
-        specializationService.updateSpecialization(specializationDto, id);
+    @PutMapping("/{specId}")
+    public void updateSpecialization(@RequestBody @Valid SpecializationDto specializationDto, @PathVariable UUID specId) {
+        specializationService.updateSpecialization(specializationDto, specId);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{specId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteSpecialization(@PathVariable UUID id) {
-        specializationService.deleteSpecialization(id);
+    public void deleteSpecialization(@PathVariable UUID specId) {
+        specializationService.deleteSpecialization(specId);
     }
 
 }

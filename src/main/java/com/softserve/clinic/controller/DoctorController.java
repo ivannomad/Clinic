@@ -1,12 +1,12 @@
 package com.softserve.clinic.controller;
 
 import com.softserve.clinic.dto.DoctorDto;
-import com.softserve.clinic.model.Doctor;
-import com.softserve.clinic.model.Specialization;
-import com.softserve.clinic.service.impl.DoctorServiceImpl;
+import com.softserve.clinic.service.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,26 +14,38 @@ import java.util.UUID;
 @RequestMapping("/doctors")
 public class DoctorController {
 
-    private final DoctorServiceImpl doctorService;
+    private final DoctorService doctorService;
 
     @Autowired
-    public DoctorController(DoctorServiceImpl doctorService) {
+    public DoctorController(DoctorService doctorService) {
         this.doctorService = doctorService;
     }
 
-    @PostMapping
-    public DoctorDto createDoctor(DoctorDto doctorDto) {
-        return doctorService.createDoctor(doctorDto);
-    }
-
     @GetMapping
-    public List<Doctor> getAllDoctors() {
+    public List<DoctorDto> getAllDoctors() {
         return doctorService.getAllDoctors();
     }
 
-    @GetMapping("/{id}")
-    public Doctor getDoctorById(UUID id) {
-        return doctorService.getDoctorById(id);
+    @GetMapping("/{uuid}")
+    public DoctorDto getDoctorById(@PathVariable UUID uuid) {
+        return doctorService.getDoctorById(uuid);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createDoctor(@RequestBody @Valid DoctorDto doctorDto) {
+        doctorService.createDoctor(doctorDto);
+    }
+
+    @PutMapping("/{uuid}")
+    public void updateDoctorById(@RequestBody @Valid DoctorDto doctorDto, @PathVariable UUID uuid) {
+        doctorService.updateDoctorById(doctorDto, uuid);
+    }
+
+    @DeleteMapping("/{uuid}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteDoctorById(@PathVariable UUID uuid) {
+        doctorService.deleteDoctorById(uuid);
     }
 
 }

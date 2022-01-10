@@ -1,24 +1,21 @@
 package com.softserve.clinic.service;
 
 import com.softserve.clinic.dto.DoctorDto;
-import com.softserve.clinic.model.Doctor;
-import com.softserve.clinic.model.Specialization;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface DoctorService {
-    DoctorDto createDoctor(DoctorDto doctorDto);
 
-    List<Doctor> getAllDoctors();
+    List<DoctorDto> getAllDoctors();
 
-    Doctor getDoctorById(UUID id);
+    DoctorDto getDoctorById(UUID uuid);
 
-    void deleteDoctorById(UUID id);
+    void createDoctor(DoctorDto doctorDto);
 
-    Doctor getDoctorBySpecialization(UUID id);
+    void updateDoctorById(DoctorDto doctorDto, UUID uuid);
 
-//    Doctor getAppointmentByDoctorId(UUID id);
+    void deleteDoctorById(UUID uuid);
 
 }
 

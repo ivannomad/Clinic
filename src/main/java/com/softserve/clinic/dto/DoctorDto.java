@@ -24,6 +24,7 @@ public class DoctorDto implements Serializable {
     @NotBlank (message = "Second name may not be blank")
     String secondName;
 
+    @NotBlank (message = "Email may not be blank")
     @Email (message = "Email should be valid")
     String email;
 

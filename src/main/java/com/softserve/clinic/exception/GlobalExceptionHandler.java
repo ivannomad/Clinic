@@ -31,12 +31,10 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return getResponseEntity(request, exception, HttpStatus.NOT_FOUND);
     }
 
-/*
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorDto> internalServerErrorHandler(HttpServletRequest request, Exception exception) {
         return getResponseEntity(request, exception, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-*/
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,

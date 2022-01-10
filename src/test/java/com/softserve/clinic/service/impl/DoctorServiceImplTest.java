@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -112,25 +113,22 @@ class DoctorServiceImplTest {
 
     @Test
     void shouldUpdateDoctorById() {
-        when(doctorMapper.doctorDtoToDoctor(doctorDto)).thenReturn(doctor);
         when(doctorRepository.findById(doctor.getId())).thenReturn(Optional.of(doctor));
+        doNothing().when(doctorMapper).updateDoctorFromDoctorDto(doctorDto, doctor);
         when(doctorRepository.save(doctor)).thenReturn(doctor);
 
         testable.updateDoctorById(doctorDto, doctorId);
 
-        verify(doctorMapper, times(1)).doctorDtoToDoctor(doctorDto);
         verify(doctorRepository, times(1)).findById(doctor.getId());
+        verify(doctorMapper, times(1)).updateDoctorFromDoctorDto(doctorDto, doctor);
         verify(doctorRepository, times(1)).save(doctor);
     }
 
     @Test
     void shouldThrowsExceptionWhenUpdateNotExistDoctor() {
-        DoctorDto expected = doctorDto;
-
-        when(doctorMapper.doctorDtoToDoctor(expected)).thenReturn(doctor);
         when(doctorRepository.findById(doctorId)).thenReturn(Optional.empty());
 
-        assertThrows(EntityNotFoundException.class, () -> testable.updateDoctorById(expected, doctorId));
+        assertThrows(EntityNotFoundException.class, () -> testable.updateDoctorById(doctorDto, doctorId));
     }
 
     @Test

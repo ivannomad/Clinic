@@ -9,6 +9,7 @@ import java.util.UUID;
 @Value
 public class SpecializationDto implements Serializable {
     UUID id;
-    @NotBlank String name;
+    @NotBlank(message = "Specialization name may not be blank")
+    String name;
     String description;
 }

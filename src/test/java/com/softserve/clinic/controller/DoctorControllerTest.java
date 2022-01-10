@@ -90,6 +90,34 @@ class DoctorControllerTest {
     }
 
     @Test
+    void creatingFailsWhenDoctorUsernameIsBlank() throws Exception {
+        mockMvc.perform(post("/doctors")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"username\":\"\"," +
+                                "\"password\":\"password\"," +
+                                "\"firstName\":\"Ivan\"," +
+                                "\"secondName\":\"Ivanov\"," +
+                                "\"email\":\"ivan@mail.com\"," +
+                                "\"contactNumber\":\"38051112233\"" +
+                                "}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void creatingFailsWhenDoctorEmailIsNotValid() throws Exception {
+        mockMvc.perform(post("/doctors")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"username\":\"ivannomad\"," +
+                                "\"password\":\"password\"," +
+                                "\"firstName\":\"Ivan\"," +
+                                "\"secondName\":\"Ivanov\"," +
+                                "\"email\":\"email\"," +
+                                "\"contactNumber\":\"38051112233\"" +
+                                "}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void shouldUpdateDoctorById() throws Exception {
         mockMvc.perform(put("/doctors/{id}", ID)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -101,6 +129,20 @@ class DoctorControllerTest {
                                 "\"contactNumber\":\"38051112233\"" +
                                 "}"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void updatingFailsWhenDoctorUsernameIsBlank() throws Exception {
+        mockMvc.perform(put("/doctors/{id}", ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"username\":\"\"," +
+                                "\"password\":\"password\"," +
+                                "\"firstName\":\"Ivan\"," +
+                                "\"secondName\":\"Ivanov\"," +
+                                "\"email\":\"ivan@mail.com\"," +
+                                "\"contactNumber\":\"38051112233\"" +
+                                "}"))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

@@ -28,7 +28,7 @@ class PatientRepositoryTest {
             "values ('bg_zn', '123456', 'Bogdan', 'Zinovii', 'bg_zn@mail.com', '223145666', 'PATIENT ')")
     @Test
     void update() {
-       Patient actual =patientRepository.findByUserName("bg_zn");
+       Patient actual =patientRepository.findByUsername("bg_zn");
         assertNotNull(actual);
         actual.setFirstName("Katerina");
        Patient expected =patientRepository.save(actual);

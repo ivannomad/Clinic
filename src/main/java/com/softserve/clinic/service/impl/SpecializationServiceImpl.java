@@ -1,7 +1,7 @@
 package com.softserve.clinic.service.impl;
 
 import com.softserve.clinic.dto.SpecializationDto;
-import com.softserve.clinic.mapper.SpecializationMapper;
+import com.softserve.clinic.dto.mapper.SpecializationMapper;
 import com.softserve.clinic.model.Specialization;
 import com.softserve.clinic.repository.SpecializationRepository;
 import com.softserve.clinic.service.SpecializationService;

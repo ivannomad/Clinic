@@ -1,7 +1,7 @@
 package com.softserve.clinic.service.impl;
 
 import com.softserve.clinic.dto.DoctorDto;
-import com.softserve.clinic.mapper.DoctorMapper;
+import com.softserve.clinic.dto.mapper.DoctorMapper;
 import com.softserve.clinic.model.Doctor;
 import com.softserve.clinic.repository.DoctorRepository;
 import org.junit.jupiter.api.BeforeAll;

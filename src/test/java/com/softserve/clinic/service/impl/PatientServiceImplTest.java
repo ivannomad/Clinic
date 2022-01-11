@@ -2,7 +2,7 @@
 package com.softserve.clinic.service.impl;
 
 import com.softserve.clinic.dto.PatientDto;
-import com.softserve.clinic.mapper.PatientMapper;
+import com.softserve.clinic.dto.mapper.PatientMapper;
 import com.softserve.clinic.model.Patient;
 import com.softserve.clinic.repository.PatientRepository;
 import org.junit.jupiter.api.Test;

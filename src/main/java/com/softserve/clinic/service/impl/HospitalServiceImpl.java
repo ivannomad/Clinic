@@ -1,7 +1,7 @@
 package com.softserve.clinic.service.impl;
 
 import com.softserve.clinic.dto.HospitalDto;
-import com.softserve.clinic.mapper.HospitalMapper;
+import com.softserve.clinic.dto.mapper.HospitalMapper;
 import com.softserve.clinic.model.Hospital;
 import com.softserve.clinic.repository.HospitalRepository;
 import com.softserve.clinic.service.HospitalService;

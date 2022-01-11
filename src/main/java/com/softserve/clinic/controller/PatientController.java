@@ -41,7 +41,7 @@ public class PatientController {
     }
 
     @PutMapping("/{patientId}")
-    public void updatePatient(@RequestBody PatientDto patientDto, @PathVariable UUID patientId) {
+    public void updatePatient(@RequestBody @Valid PatientDto patientDto, @PathVariable UUID patientId) {
         patientService.updatePatient(patientDto, patientId);
     }
 

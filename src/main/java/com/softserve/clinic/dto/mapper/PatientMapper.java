@@ -1,4 +1,4 @@
-package com.softserve.clinic.mapper;
+package com.softserve.clinic.dto.mapper;
 
 import com.softserve.clinic.dto.PatientDto;
 import com.softserve.clinic.model.Patient;

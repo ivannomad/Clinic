@@ -1,0 +1,351 @@
+databaseChangeLog:
+- changeSet:
+    id: 1641895077078-1
+    author: oleg (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: appointments_pkey
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: date_and_time
+            type: TIMESTAMP WITHOUT TIME ZONE
+        - column:
+            name: doctor_id
+            type: UUID
+        - column:
+            name: patient_id
+            type: UUID
+        tableName: appointments
+- changeSet:
+    id: 1641895077078-2
+    author: oleg (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: doctors_pkey
+            name: user_id
+            type: UUID
+        tableName: doctors
+- changeSet:
+    id: 1641895077078-3
+    author: oleg (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+            name: birth_date
+            type: date
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: patients_pkey
+            name: user_id
+            type: UUID
+        tableName: patients
+- changeSet:
+    id: 1641895077078-4
+    author: oleg (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: doctor_hospital_pkey
+            name: doctor_id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: doctor_hospital_pkey
+            name: hospital_id
+            type: UUID
+        tableName: doctor_hospital
+- changeSet:
+    id: 1641895077078-5
+    author: oleg (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: hospitals_pkey
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: address_number
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: city
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: street
+            type: VARCHAR(255)
+        tableName: hospitals
+- changeSet:
+    id: 1641895077078-6
+    author: oleg (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: doctor_specialization_pkey
+            name: doctor_id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: doctor_specialization_pkey
+            name: specialization_id
+            type: UUID
+        tableName: doctor_specialization
+- changeSet:
+    id: 1641895077078-7
+    author: oleg (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: specializations_pkey
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: description
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: name
+            type: VARCHAR(255)
+        tableName: specializations
+- changeSet:
+    id: 1641895077078-8
+    author: oleg (generated)
+    changes:
+    - createTable:
+        columns:
+        - column:
+            constraints:
+              nullable: false
+              primaryKey: true
+              primaryKeyName: users_pkey
+            name: id
+            type: UUID
+        - column:
+            constraints:
+              nullable: false
+            name: contact_number
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: email
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: first_name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: password
+            type: VARCHAR(255)
+        - column:
+            name: role
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: second_name
+            type: VARCHAR(255)
+        - column:
+            constraints:
+              nullable: false
+            name: username
+            type: VARCHAR(255)
+        tableName: users
+- changeSet:
+    id: 1641895077078-9
+    author: oleg (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: doctor_id
+        baseTableName: appointments
+        constraintName: appointments_doctor_id_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: user_id
+        referencedTableName: doctors
+        validate: true
+- changeSet:
+    id: 1641895077078-10
+    author: oleg (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: patient_id
+        baseTableName: appointments
+        constraintName: appointments_patient_id_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: user_id
+        referencedTableName: patients
+        validate: true
+- changeSet:
+    id: 1641895077078-11
+    author: oleg (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: doctor_id
+        baseTableName: doctor_hospital
+        constraintName: doctor_hospital_doctor_id_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: user_id
+        referencedTableName: doctors
+        validate: true
+- changeSet:
+    id: 1641895077078-12
+    author: oleg (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: doctor_id
+        baseTableName: doctor_specialization
+        constraintName: doctor_specialization_doctor_id_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: user_id
+        referencedTableName: doctors
+        validate: true
+- changeSet:
+    id: 1641895077078-13
+    author: oleg (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: doctors
+        constraintName: doctors_user_id_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1641895077078-14
+    author: oleg (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: user_id
+        baseTableName: patients
+        constraintName: patients_user_id_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: users
+        validate: true
+- changeSet:
+    id: 1641895077078-15
+    author: oleg (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: hospital_id
+        baseTableName: doctor_hospital
+        constraintName: doctor_hospital_hospital_id_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: hospitals
+        validate: true
+- changeSet:
+    id: 1641895077078-16
+    author: oleg (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: name
+        constraintName: hospitals_name_key
+        tableName: hospitals
+- changeSet:
+    id: 1641895077078-17
+    author: oleg (generated)
+    changes:
+    - addForeignKeyConstraint:
+        baseColumnNames: specialization_id
+        baseTableName: doctor_specialization
+        constraintName: doctor_specialization_specialization_id_fkey
+        deferrable: false
+        initiallyDeferred: false
+        onDelete: NO ACTION
+        onUpdate: NO ACTION
+        referencedColumnNames: id
+        referencedTableName: specializations
+        validate: true
+- changeSet:
+    id: 1641895077078-18
+    author: oleg (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: name
+        constraintName: specializations_name_key
+        tableName: specializations
+- changeSet:
+    id: 1641895077078-19
+    author: oleg (generated)
+    changes:
+    - addUniqueConstraint:
+        columnNames: username
+        constraintName: users_username_key
+        tableName: users
+

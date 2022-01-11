@@ -2,8 +2,8 @@ package com.softserve.clinic.service.impl;
 
 import com.softserve.clinic.dto.AppointmentDto;
 import com.softserve.clinic.dto.DoctorDto;
-import com.softserve.clinic.mapper.AppointmentMapper;
-import com.softserve.clinic.mapper.DoctorMapper;
+import com.softserve.clinic.dto.mapper.AppointmentMapper;
+import com.softserve.clinic.dto.mapper.DoctorMapper;
 import com.softserve.clinic.model.Appointment;
 import com.softserve.clinic.model.Doctor;
 import com.softserve.clinic.repository.AppointmentRepository;

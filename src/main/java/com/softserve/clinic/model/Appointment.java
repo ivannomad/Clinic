@@ -26,9 +26,17 @@ public class Appointment {
     private LocalDateTime dateAndTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "doctor_id",
+            foreignKey = @ForeignKey(name = "appointments_doctor_id_fkey")
+    )
     private Doctor doctor;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "patient_id",
+            foreignKey = @ForeignKey(name = "appointments_patient_id_fkey")
+    )
     private Patient patient;
 
 }

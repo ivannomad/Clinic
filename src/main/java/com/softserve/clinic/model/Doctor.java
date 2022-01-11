@@ -11,17 +11,30 @@ import java.util.Set;
 @Table(name = "doctors")
 @Getter
 @Setter
+@PrimaryKeyJoinColumn(
+        name = "user_id",
+        foreignKey = @ForeignKey(name = "doctors_user_id_fkey")
+)
 public class Doctor extends User {
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "doctors_hospitals",
-            joinColumns = @JoinColumn(name = "doctor_id"),
-            inverseJoinColumns = @JoinColumn(name = "hospitals_id"))
+    @JoinTable(name = "doctor_hospital",
+            joinColumns = @JoinColumn(
+                    name = "doctor_id",
+                    foreignKey = @ForeignKey(name = "doctor_hospital_doctor_id_fkey")),
+            inverseJoinColumns = @JoinColumn(
+                    name = "hospital_id",
+                    foreignKey = @ForeignKey(name = "doctor_hospital_hospital_id_fkey"))
+    )
     private Set<Hospital> hospitals = new HashSet<>();
 
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(name = "doctors_specializations",
-            joinColumns = @JoinColumn(name = "doctor_id"),
-            inverseJoinColumns = @JoinColumn(name = "specializations_id"))
+    @JoinTable(name = "doctor_specialization",
+            joinColumns = @JoinColumn(name = "doctor_id",
+                    foreignKey = @ForeignKey(name = "doctor_specialization_doctor_id_fkey")),
+            inverseJoinColumns = @JoinColumn(name = "specialization_id",
+                    foreignKey = @ForeignKey(name = "doctor_specialization_specialization_id_fkey"))
+    )
     private Set<Specialization> specializations = new HashSet<>();
+
 }

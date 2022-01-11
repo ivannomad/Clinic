@@ -11,7 +11,11 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "hospitals")
+@Table(
+        name = "hospitals",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "hospitals_name_key", columnNames = "name")
+        })
 @Getter
 @Setter
 public class Hospital {
@@ -23,13 +27,20 @@ public class Hospital {
             strategy = "org.hibernate.id.UUIDGenerator"
     )
     private UUID id;
-    private String hospitalName;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     private String city;
+
+    @Column(nullable = false)
     private String street;
+
+    @Column(nullable = false)
     private String addressNumber;
 
     @ManyToMany(mappedBy = "hospitals")
     private Set<Doctor> doctors = new HashSet<>();
-
 
 }

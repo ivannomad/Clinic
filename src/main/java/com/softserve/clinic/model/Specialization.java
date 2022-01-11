@@ -10,7 +10,11 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "specializations")
+@Table(
+        name = "specializations",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "specializations_name_key", columnNames = "name")
+        })
 @Getter
 @Setter
 public class Specialization {
@@ -22,9 +26,10 @@ public class Specialization {
     )
     private UUID id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
 
+    @Column(nullable = false)
     private String description;
 
     @ManyToMany(mappedBy = "specializations")

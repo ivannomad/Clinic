@@ -30,8 +30,8 @@ public class PatientController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createPatient(@RequestBody @Valid PatientDto patientDto) {
-        patientService.createPatient(patientDto);
+    public PatientDto createPatient(@RequestBody @Valid PatientDto patientDto) {
+        return patientService.createPatient(patientDto);
     }
 
     @DeleteMapping("/{patientId}")
@@ -47,12 +47,12 @@ public class PatientController {
 
     @PostMapping("/{patientId}/app/{appId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createAppointment(@PathVariable UUID patientId, @PathVariable UUID appId) {
-        patientService.createAppointment(patientId, appId);
+    public void makeAppointment(@PathVariable UUID patientId, @PathVariable UUID appId) {
+        patientService.makeAppointment(patientId, appId);
     }
 
     @GetMapping("/{patientId}/app")
     public List<AppointmentDto> getAllAppointments(@PathVariable UUID patientId) {
-        return patientService.getAllAppointments(patientId);
+        return patientService.getAllPatientAppointments(patientId);
     }
 }

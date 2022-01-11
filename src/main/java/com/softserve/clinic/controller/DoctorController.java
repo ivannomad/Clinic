@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,18 +45,18 @@ public class DoctorController {
         doctorService.deleteDoctorById(doctorId);
     }
 
-    @PostMapping("/{doctorId}/schedule")
+    @PostMapping("/{doctorId}/appointments")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createAppointment(@PathVariable UUID doctorId, @RequestBody LocalDateTime localDateTime) {
-        doctorService.createAppointment(doctorId, localDateTime);
+    public void createAppointment(@PathVariable UUID doctorId, @RequestBody AppointmentDto appointmentDto) {
+        doctorService.createAppointment(doctorId, appointmentDto);
     }
 
-    @GetMapping("/{doctorId}/schedule")
-    public List<AppointmentDto> getDoctorSchedule(@PathVariable UUID doctorId) {
-        return doctorService.getDoctorSchedule(doctorId);
+    @GetMapping("/{doctorId}/appointments/free")
+    public List<AppointmentDto> getFreeDoctorAppointments(@PathVariable UUID doctorId) {
+        return doctorService.getDoctorFreeAppointments(doctorId);
     }
 
-    @GetMapping("/{doctorId}/app")
+    @GetMapping("/{doctorId}/appointments/not-free")
     public List<AppointmentDto> getDoctorAppointments(@PathVariable UUID doctorId) {
         return doctorService.getDoctorAppointments(doctorId);
     }

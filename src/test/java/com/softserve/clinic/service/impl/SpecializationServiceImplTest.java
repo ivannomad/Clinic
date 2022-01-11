@@ -4,7 +4,6 @@ import com.softserve.clinic.dto.SpecializationDto;
 import com.softserve.clinic.dto.mapper.SpecializationMapper;
 import com.softserve.clinic.model.Specialization;
 import com.softserve.clinic.repository.SpecializationRepository;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -24,26 +23,17 @@ import static org.mockito.Mockito.*;
 class SpecializationServiceImplTest {
 
     @Mock
-    SpecializationRepository specializationRepository;
+    private SpecializationRepository specializationRepository;
     @Mock
-    SpecializationMapper specializationMapper;
+    private SpecializationMapper specializationMapper;
+    @Mock
+    private Specialization specialization;
+    @Mock
+    private SpecializationDto specializationDto;
     @InjectMocks
-    SpecializationServiceImpl testable;
+    private SpecializationServiceImpl specializationService;
 
-    private static UUID specId;
-    private static String specName;
-    private static Specialization specialization;
-    private static SpecializationDto specializationDto;
-
-    @BeforeAll
-    static void init() {
-        specId = UUID.randomUUID();
-        specName = "Surgeon";
-        specializationDto = new SpecializationDto(specId, specName, "description");
-        specialization = new Specialization();
-        specialization.setId(specId);
-        specialization.setName(specName);
-    }
+    private static final UUID SPEC_ID = UUID.randomUUID();
 
     @Test
     void shouldGetAllSpecializations() {
@@ -53,7 +43,7 @@ class SpecializationServiceImplTest {
         when(specializationRepository.findAll()).thenReturn(specializationList);
         when(specializationMapper.specToSpecDto(specialization)).thenReturn(specializationDto);
 
-        List<SpecializationDto> actual = testable.getAllSpecializations();
+        List<SpecializationDto> actual = specializationService.getAllSpecializations();
 
         assertThat(actual).isEqualTo(expected);
     }
@@ -62,38 +52,38 @@ class SpecializationServiceImplTest {
     void shouldGetSpecializationById() {
         SpecializationDto expected = specializationDto;
 
-        when(specializationRepository.findById(specId)).thenReturn(Optional.of(specialization));
+        when(specializationRepository.findById(SPEC_ID)).thenReturn(Optional.of(specialization));
         when(specializationMapper.specToSpecDto(specialization)).thenReturn(expected);
 
-        SpecializationDto actual = testable.getSpecializationById(specId);
+        SpecializationDto actual = specializationService.getSpecializationById(SPEC_ID);
 
         assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void shouldThrowsExceptionWhenGetSpecializationByWrongId() {
-        when(specializationRepository.findById(specId)).thenReturn(Optional.empty());
+        when(specializationRepository.findById(SPEC_ID)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> testable.getSpecializationById(specId)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> specializationService.getSpecializationById(SPEC_ID)).isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
     void shouldGetSpecializationByName() {
         SpecializationDto expected = specializationDto;
 
-        when(specializationRepository.findByName(specName)).thenReturn(Optional.of(specialization));
+        when(specializationRepository.findByName(anyString())).thenReturn(Optional.of(specialization));
         when(specializationMapper.specToSpecDto(specialization)).thenReturn(expected);
 
-        SpecializationDto actual = testable.getSpecializationByName(specName);
+        SpecializationDto actual = specializationService.getSpecializationByName(anyString());
 
         assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void shouldThrowsExceptionWhenGetSpecializationByWrongName() {
-        when(specializationRepository.findByName(specName)).thenReturn(Optional.empty());
+        when(specializationRepository.findByName(anyString())).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> testable.getSpecializationByName(specName)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> specializationService.getSpecializationByName("name")).isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
@@ -101,7 +91,7 @@ class SpecializationServiceImplTest {
         when(specializationMapper.specDtoToSpec(specializationDto)).thenReturn(specialization);
         when(specializationRepository.save(specialization)).thenReturn(specialization);
 
-        testable.createSpecialization(specializationDto);
+        specializationService.createSpecialization(specializationDto);
 
         verify(specializationMapper, times(1)).specDtoToSpec(specializationDto);
         verify(specializationRepository, times(1)).save(specialization);
@@ -109,37 +99,37 @@ class SpecializationServiceImplTest {
 
     @Test
     void shouldUpdateSpecialization() {
-        when(specializationRepository.findById(specialization.getId())).thenReturn(Optional.of(specialization));
+        when(specializationRepository.findById(SPEC_ID)).thenReturn(Optional.of(specialization));
         doNothing().when(specializationMapper).updateSpecializationFromSpecializationDto(specializationDto, specialization);
         when(specializationRepository.save(specialization)).thenReturn(specialization);
 
-        testable.updateSpecialization(specializationDto, specId);
+        specializationService.updateSpecialization(specializationDto, SPEC_ID);
 
-        verify(specializationRepository, times(1)).findById(specialization.getId());
+        verify(specializationRepository, times(1)).findById(SPEC_ID);
         verify(specializationMapper, times(1)).updateSpecializationFromSpecializationDto(specializationDto, specialization);
         verify(specializationRepository, times(1)).save(specialization);
     }
 
     @Test
     void shouldThrowsExceptionWhenUpdateNotExistSpecialization() {
-        when(specializationRepository.findById(specId)).thenReturn(Optional.empty());
+        when(specializationRepository.findById(SPEC_ID)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> testable.updateSpecialization(specializationDto, specId)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> specializationService.updateSpecialization(specializationDto, SPEC_ID)).isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
     void shouldDeleteSpecialization() {
-        when(specializationRepository.existsById(specId)).thenReturn(true);
+        when(specializationRepository.existsById(SPEC_ID)).thenReturn(true);
 
-        testable.deleteSpecialization(specId);
+        specializationService.deleteSpecialization(SPEC_ID);
 
-        verify(specializationRepository, times(1)).deleteById(specId);
+        verify(specializationRepository, times(1)).deleteById(SPEC_ID);
     }
 
     @Test
     void shouldThrowsExceptionWhenDeleteNotExistSpecialization() {
-        when(specializationRepository.existsById(specId)).thenReturn(false);
+        when(specializationRepository.existsById(SPEC_ID)).thenReturn(false);
 
-        assertThatThrownBy(() -> testable.deleteSpecialization(specId)).isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> specializationService.deleteSpecialization(SPEC_ID)).isInstanceOf(EntityNotFoundException.class);
     }
 }

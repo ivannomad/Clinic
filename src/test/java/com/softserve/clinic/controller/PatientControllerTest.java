@@ -1,5 +1,6 @@
 package com.softserve.clinic.controller;
 
+import com.softserve.clinic.dto.AppointmentDto;
 import com.softserve.clinic.dto.PatientDto;
 import com.softserve.clinic.service.PatientService;
 import org.junit.jupiter.api.Test;
@@ -23,6 +24,8 @@ class PatientControllerTest {
 
     @MockBean
     private PatientService patientService;
+    @MockBean
+    private AppointmentDto appointmentDto;
 
     @Autowired
     private MockMvc mockMvc;
@@ -34,7 +37,7 @@ class PatientControllerTest {
     private static final String SECOND_NAME = "Ivanov";
     private static final String EMAIL = "ivan@mail.com";
     private static final String CONTACT_NUMBER = "380501112233";
-    private static final LocalDate BIRTH_DATE = LocalDate.of(1960, 01, 01);
+    private static final LocalDate BIRTH_DATE = LocalDate.of(1960, 1, 1);
     private static final String FORMATTED_BIRTH_DATE = BIRTH_DATE.format(ofPattern("yyyy-MM-dd"));
 
     @Test
@@ -175,5 +178,21 @@ class PatientControllerTest {
     void shouldDeletePatientById() throws Exception {
         mockMvc.perform(delete("/patients/{id}", ID))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldMakeAppointment() throws Exception {
+        mockMvc.perform(post("/patients/{patientId}/appointments/{appId}", ID, ID))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void shouldGetAllAppointments() throws Exception {
+        List<AppointmentDto> appointmentDtoList = List.of(appointmentDto);
+
+        when(patientService.getAllPatientAppointments(ID)).thenReturn(appointmentDtoList);
+
+        mockMvc.perform(get("/patients/{patientId}/appointments", ID))
+                .andExpect(status().isOk());
     }
 }

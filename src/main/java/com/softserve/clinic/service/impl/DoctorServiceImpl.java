@@ -89,7 +89,8 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public void createAppointment(UUID doctorId, AppointmentDto appointmentDto) {
-        Doctor doctor = doctorRepository.getById(doctorId);
+        Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(
+                () -> new EntityNotFoundException("Unable to find Doctor with id " + doctorId));
         Appointment appointment = appointmentMapper.appointmentDtoToAppointment(appointmentDto);
         appointment.setDoctor(doctor);
         appointmentRepository.save(appointment);

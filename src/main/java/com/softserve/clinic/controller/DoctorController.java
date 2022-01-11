@@ -47,7 +47,7 @@ public class DoctorController {
 
     @PostMapping("/{doctorId}/appointments")
     @ResponseStatus(HttpStatus.CREATED)
-    public void createAppointment(@PathVariable UUID doctorId, @RequestBody AppointmentDto appointmentDto) {
+    public void createAppointment(@PathVariable UUID doctorId, @RequestBody @Valid AppointmentDto appointmentDto) {
         doctorService.createAppointment(doctorId, appointmentDto);
     }
 

@@ -1,5 +1,6 @@
 package com.softserve.clinic.controller;
 
+import com.softserve.clinic.dto.AppointmentDto;
 import com.softserve.clinic.dto.DoctorDto;
 import com.softserve.clinic.service.DoctorService;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,8 @@ class DoctorControllerTest {
 
     @MockBean
     private DoctorService doctorService;
+    @MockBean
+    private AppointmentDto appointmentDto;
 
     @Autowired
     private MockMvc mockMvc;
@@ -28,7 +31,7 @@ class DoctorControllerTest {
     private static final UUID ID = UUID.randomUUID();
     private static final String USERNAME = "ivannomad";
     private static final String PASSWORD = "password";
-    private static final String FIRST_NAME = "Iavn";
+    private static final String FIRST_NAME = "Ivan";
     private static final String SECOND_NAME = "Ivanov";
     private static final String EMAIL = "ivan@mail.com";
     private static final String CONTACT_NUMBER = "380501112233";
@@ -61,7 +64,7 @@ class DoctorControllerTest {
 
         when(doctorService.getDoctorById(ID)).thenReturn(doctorDto);
 
-        mockMvc.perform(get("/doctors/{id}", ID))
+        mockMvc.perform(get("/doctors/{doctorId}", ID))
                 .andExpectAll(
                         status().isOk(),
                         content().contentType(MediaType.APPLICATION_JSON),
@@ -119,7 +122,7 @@ class DoctorControllerTest {
 
     @Test
     void shouldUpdateDoctorById() throws Exception {
-        mockMvc.perform(put("/doctors/{id}", ID)
+        mockMvc.perform(put("/doctors/{doctorId}", ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"username\":\"ivannomad\"," +
                                 "\"password\":\"password\"," +
@@ -133,7 +136,7 @@ class DoctorControllerTest {
 
     @Test
     void updatingFailsWhenDoctorUsernameIsBlank() throws Exception {
-        mockMvc.perform(put("/doctors/{id}", ID)
+        mockMvc.perform(put("/doctors/{doctorId}", ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"username\":\"\"," +
                                 "\"password\":\"password\"," +
@@ -147,7 +150,51 @@ class DoctorControllerTest {
 
     @Test
     void shouldDeleteDoctorById() throws Exception {
-        mockMvc.perform(delete("/doctors/{id}", ID))
+        mockMvc.perform(delete("/doctors/{doctorId}", ID))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldCreateAppointment() throws Exception {
+        mockMvc.perform(post("/doctors/{doctorId}/appointments", ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"dateAndTime\":\"2999-01-09T20:45:08.3408987\"}"))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    void creatingFailsWhenDateIsPast() throws Exception {
+        mockMvc.perform(post("/doctors/{doctorId}/appointments", ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"dateAndTime\":\"1000-01-09T20:45:08.3408987\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void creatingFailsWhenDateIsNull() throws Exception {
+        mockMvc.perform(post("/doctors/{doctorId}/appointments", ID)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"dateAndTime\":\"\"}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getFreeDoctorAppointments() throws Exception {
+        List<AppointmentDto> appointmentDtoList = List.of(appointmentDto);
+
+        when(doctorService.getDoctorFreeAppointments(ID)).thenReturn(appointmentDtoList);
+
+        mockMvc.perform(get("/doctors/{doctorId}/appointments/free", ID))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void getDoctorAppointments() throws Exception {
+        List<AppointmentDto> appointmentDtoList = List.of(appointmentDto);
+
+        when(doctorService.getDoctorAppointments(ID)).thenReturn(appointmentDtoList);
+
+        mockMvc.perform(get("/doctors/{doctorId}/appointments/not-free", ID))
+                .andExpect(status().isOk());
     }
 }

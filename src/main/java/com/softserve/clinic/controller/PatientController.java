@@ -45,13 +45,13 @@ public class PatientController {
         patientService.updatePatient(patientDto, patientId);
     }
 
-    @PostMapping("/{patientId}/app/{appId}")
+    @PostMapping("/{patientId}/appointments/{appId}")
     @ResponseStatus(HttpStatus.CREATED)
     public void makeAppointment(@PathVariable UUID patientId, @PathVariable UUID appId) {
         patientService.makeAppointment(patientId, appId);
     }
 
-    @GetMapping("/{patientId}/app")
+    @GetMapping("/{patientId}/appointments")
     public List<AppointmentDto> getAllAppointments(@PathVariable UUID patientId) {
         return patientService.getAllPatientAppointments(patientId);
     }

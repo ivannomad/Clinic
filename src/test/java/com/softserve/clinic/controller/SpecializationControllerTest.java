@@ -74,7 +74,8 @@ class SpecializationControllerTest {
     void shouldCreateSpecialization() throws Exception {
         mockMvc.perform(post("/specializations")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Surgeon\"}"))
+                        .content("{\"name\" : \"Surgeon\"," +
+                                "\"description\":\"Description\"}"))
                 .andExpect(status().isCreated());
     }
 
@@ -90,7 +91,8 @@ class SpecializationControllerTest {
     void shouldUpdateSpecialization() throws Exception {
         mockMvc.perform(put("/specializations/{specId}", ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Surgeon\"}"))
+                        .content("{\"name\" : \"Surgeon\"," +
+                                 "\"description\":\"Description\"}"))
                 .andExpect(status().isOk());
     }
 

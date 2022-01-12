@@ -98,14 +98,12 @@ class SpecializationServiceImplTest {
 
     @Test
     void shouldCreateSpecialization() {
-        SpecializationDto expected = specializationDto;
-
-        when(specializationMapper.specDtoToSpec(expected)).thenReturn(specialization);
+        when(specializationMapper.specDtoToSpec(specializationDto)).thenReturn(specialization);
         when(specializationRepository.save(specialization)).thenReturn(specialization);
 
-        testable.createSpecialization(expected);
+        testable.createSpecialization(specializationDto);
 
-        verify(specializationMapper, times(1)).specDtoToSpec(expected);
+        verify(specializationMapper, times(1)).specDtoToSpec(specializationDto);
         verify(specializationRepository, times(1)).save(specialization);
     }
 

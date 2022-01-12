@@ -19,11 +19,11 @@ public interface DoctorService {
 
     void deleteDoctorById(UUID doctorId);
 
-    List<AppointmentDto> getDoctorSchedule(UUID doctorId);
+    List<AppointmentDto> getDoctorFreeAppointments(UUID doctorId);
 
     List<AppointmentDto> getDoctorAppointments(UUID doctorId);
 
-    void createAppointment(UUID doctorId, LocalDateTime localDateTime);
+    void createAppointment(UUID doctorId, AppointmentDto appointmentDto);
 }
 
 

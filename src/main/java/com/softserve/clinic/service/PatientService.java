@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public interface PatientService {
 
-    void createPatient(PatientDto patientDto);
+    PatientDto createPatient(PatientDto patientDto);
 
     List<PatientDto> getAllPatients();
 
@@ -18,7 +18,7 @@ public interface PatientService {
 
     void deletePatientById(UUID patientId);
 
-    void createAppointment(UUID patientId, UUID appId);
+    void makeAppointment(UUID patientId, UUID appId);
 
-    List<AppointmentDto> getAllAppointments(UUID patientId);
+    List<AppointmentDto> getAllPatientAppointments(UUID patientId);
 }

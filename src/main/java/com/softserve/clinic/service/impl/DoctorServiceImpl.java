@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -67,7 +66,7 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public List<AppointmentDto> getDoctorSchedule(UUID doctorId) {
+    public List<AppointmentDto> getDoctorFreeAppointments(UUID doctorId) {
         if (doctorRepository.existsById(doctorId)) {
             return appointmentRepository.findAppointmentsByDoctorIdAndPatientIsNull(doctorId).stream()
                     .map(appointmentMapper::appointmentToAppointmentDto)
@@ -89,11 +88,10 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public void createAppointment(UUID doctorId, LocalDateTime localDateTime) {
+    public void createAppointment(UUID doctorId, AppointmentDto appointmentDto) {
         Doctor doctor = doctorRepository.getById(doctorId);
-        Appointment appointment = new Appointment();
+        Appointment appointment = appointmentMapper.appointmentDtoToAppointment(appointmentDto);
         appointment.setDoctor(doctor);
-        appointment.setDateAndTime(localDateTime);
         appointmentRepository.save(appointment);
     }
 }

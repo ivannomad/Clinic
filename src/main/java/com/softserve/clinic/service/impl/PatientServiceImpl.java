@@ -42,8 +42,9 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public void createPatient(PatientDto patientDto) {
-        patientRepository.save(patientMapper.patientDtoToPatient(patientDto));
+    public PatientDto createPatient(PatientDto patientDto) {
+        Patient savedPatient = patientRepository.save(patientMapper.patientDtoToPatient(patientDto));
+        return patientMapper.patientToPatientDto(savedPatient);
     }
 
     @Override
@@ -64,27 +65,23 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public void createAppointment(UUID patientId, UUID appId) {
-        Appointment appointment = appointmentRepository.findById(appId).orElseThrow();
-        appointment.setPatient(patientRepository.getById(patientId));
+    public void makeAppointment(UUID patientId, UUID appId) {
+        Appointment appointment = appointmentRepository.findAppointmentByIdAndPatientIsNull(appId).orElseThrow(
+                () -> new EntityNotFoundException("Unable to find Appointment with id " + appId));
+        Patient patient = patientRepository.findById(patientId).orElseThrow(
+                () -> new EntityNotFoundException("Unable to find Patient with id " + patientId));
+        appointment.setPatient(patient);
         appointmentRepository.save(appointment);
     }
 
-/*  @Override
-    public void createAppointment(UUID patientId, UUID appId) {
-        Appointment appointment = appointmentRepository.findById(appId).orElseThrow(
-                () -> new EntityNotFoundException("Could not find appointment: " + appId));
-        Patient patient = patientRepository.findById(patientId).orElseThrow(
-                () -> new EntityNotFoundException("Could not find patient: " + id));
-        appointment.setPatient(patient);
-        appointmentRepository.save(appointment);
-    }*/
-
-
     @Override
-    public List<AppointmentDto> getAllAppointments(UUID patientId) {
-        return appointmentRepository.findAppointmentsByPatientId(patientId).stream()
-                .map(appointmentMapper::appointmentToAppointmentDto)
-                .collect(Collectors.toList());
+    public List<AppointmentDto> getAllPatientAppointments(UUID patientId) {
+        if (patientRepository.existsById(patientId)) {
+            return appointmentRepository.findAppointmentsByPatientId(patientId).stream()
+                    .map(appointmentMapper::appointmentToAppointmentDto)
+                    .collect(Collectors.toList());
+        } else {
+            throw new EntityNotFoundException("Unable to find Patient with id " + patientId);
+        }
     }
 }

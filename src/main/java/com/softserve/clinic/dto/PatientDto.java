@@ -24,6 +24,7 @@ public class PatientDto implements Serializable {
     @NotBlank(message = "Second name may not be blank")
     String secondName;
 
+    @NotBlank
     @Email(message = "Email should be valid")
     String email;
 

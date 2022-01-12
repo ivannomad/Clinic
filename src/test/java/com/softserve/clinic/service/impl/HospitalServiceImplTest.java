@@ -16,8 +16,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class HospitalServiceImplTest {
@@ -38,12 +42,12 @@ class HospitalServiceImplTest {
 
     @BeforeAll
     static void init() {
+        hospital = new Hospital();
         hospitalId = UUID.randomUUID();
         hospitalName = "OnClinic";
-        hospitalDto = new HospitalDto(hospitalId, hospitalName, "", "", "");
-        hospital = new Hospital();
         hospital.setId(hospitalId);
         hospital.setName(hospitalName);
+        hospitalDto = new HospitalDto(hospitalId, hospitalName, "", "", "");
     }
 
     @Test
@@ -82,7 +86,7 @@ class HospitalServiceImplTest {
     }
 
     @Test
-    void shouldReturnExceptionWhenDeleteHospitalIdDoesNotExist() {
+    void shouldThrowExceptionWhenDeleteHospitalIdDoesNotExist() {
         when(hospitalRepository.existsById(hospitalId)).thenReturn(false);
 
         assertThrows(EntityNotFoundException.class, () -> hospitalService.deleteHospitalById(hospitalId));
@@ -104,6 +108,40 @@ class HospitalServiceImplTest {
     @Test
     void shouldGetHospitalById() {
         HospitalDto expected = hospitalDto;
+
+        when(hospitalRepository.findById(hospitalId)).thenReturn(Optional.of(hospital));
+        when(hospitalMapper.hospitalToHospitalDto(hospital)).thenReturn(expected);
+
+        HospitalDto actual = hospitalService.getHospitalById(hospitalId);
+
+        assertEquals(expected, actual);
     }
+
+    @Test
+    void shouldThrowExceptionWhenHospitalIdIsNotCorrect() {
+        when(hospitalRepository.findById(hospitalId)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> hospitalService.getHospitalById(hospitalId));
+    }
+
+    @Test
+    void shouldGetHospitalByName() {
+        HospitalDto expected = hospitalDto;
+
+        when(hospitalRepository.findByName(hospitalName)).thenReturn(Optional.of(hospital));
+        when(hospitalMapper.hospitalToHospitalDto(hospital)).thenReturn(expected);
+
+        HospitalDto actual = hospitalService.getHospitalByName(hospitalName);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void shouldThrowExceptionWhenHospitalNameIsNotCorrect() {
+        when(hospitalRepository.findByName(hospitalName)).thenReturn(Optional.empty());
+
+        assertThrows(EntityNotFoundException.class, () -> hospitalService.getHospitalByName(hospitalName));
+    }
+
 
 }

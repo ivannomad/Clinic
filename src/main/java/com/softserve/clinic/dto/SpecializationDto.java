@@ -11,5 +11,6 @@ public class SpecializationDto implements Serializable {
     UUID id;
     @NotBlank(message = "Specialization name may not be blank")
     String name;
+    @NotBlank(message = "Description may not be blank")
     String description;
 }

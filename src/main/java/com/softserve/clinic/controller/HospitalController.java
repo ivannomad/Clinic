@@ -1,12 +1,17 @@
 package com.softserve.clinic.controller;
 
 import com.softserve.clinic.dto.HospitalDto;
+import com.softserve.clinic.dto.PatientDto;
+import com.softserve.clinic.model.Hospital;
 import com.softserve.clinic.service.HospitalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,15 +32,20 @@ public class HospitalController {
         return hospitalService.getHospitalById(hospitalId);
     }
 
-    @GetMapping("/{hospitalName}")
-    public HospitalDto getHospitalByName(@PathVariable String hospitalName) {
+    @GetMapping("/hospitalName")
+    public HospitalDto getHospitalByName(@RequestParam String hospitalName) {
         return hospitalService.getHospitalByName(hospitalName);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public void createHospital(@RequestBody @Valid HospitalDto hospitalDto) {
-        hospitalService.createHospital(hospitalDto);
+    public ResponseEntity<?> createHospital(@RequestBody @Valid HospitalDto hospitalDto) {
+        HospitalDto hospital = hospitalService.createHospital(hospitalDto);
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{hospitalId}")
+                .buildAndExpand(hospital.getId())
+                .toUri();
+        return ResponseEntity.created(uri).build();
     }
 
     @PutMapping("/{hospitalId}")

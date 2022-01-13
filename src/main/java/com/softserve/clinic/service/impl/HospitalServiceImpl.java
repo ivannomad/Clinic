@@ -16,20 +16,19 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class HospitalServiceImpl implements HospitalService {
-//
+
     private final HospitalMapper hospitalMapper;
     private final HospitalRepository hospitalRepository;
 
     @Override
-    public void createHospital(HospitalDto hospitalDto) {
-        Hospital hospital = hospitalMapper.hospitalDtoToHospital(hospitalDto);
-        hospitalRepository.save(hospital);
+    public HospitalDto createHospital(HospitalDto hospitalDto) {
+        Hospital hospital = hospitalRepository.save(hospitalMapper.hospitalDtoToHospital(hospitalDto));
+        return hospitalMapper.hospitalToHospitalDto(hospital);
     }
 
     @Override
     public void updateHospital(HospitalDto hospitalDto, UUID hospitalId) {
-        Hospital hospital = hospitalRepository.findById(hospitalId)
-                .orElseThrow(() -> new EntityNotFoundException("Hospital with such id: " + hospitalId + " not found"));
+        Hospital hospital = hospitalRepository.findById(hospitalId).orElseThrow(() -> new EntityNotFoundException("Hospital with such id: " + hospitalId + " not found"));
         hospitalMapper.updateHospitalFromHospitalDto(hospitalDto, hospital);
         hospitalRepository.save(hospital);
     }
@@ -45,23 +44,16 @@ public class HospitalServiceImpl implements HospitalService {
 
     @Override
     public List<HospitalDto> getAllHospitals() {
-        return hospitalRepository.findAll()
-                .stream()
-                .map(hospitalMapper::hospitalToHospitalDto)
-                .collect(Collectors.toList());
+        return hospitalRepository.findAll().stream().map(hospitalMapper::hospitalToHospitalDto).collect(Collectors.toList());
     }
 
     @Override
     public HospitalDto getHospitalByName(String hospitalName) {
-        return hospitalRepository.findByName(hospitalName)
-                .map(hospitalMapper::hospitalToHospitalDto)
-                .orElseThrow(() -> new EntityNotFoundException("Hospital with name: " + hospitalName + " not found"));
+        return hospitalRepository.findByName(hospitalName).map(hospitalMapper::hospitalToHospitalDto).orElseThrow(() -> new EntityNotFoundException("Hospital with name: " + hospitalName + " not found"));
     }
 
     @Override
     public HospitalDto getHospitalById(UUID hospitalId) {
-        return hospitalRepository.findById(hospitalId)
-                .map(hospitalMapper::hospitalToHospitalDto)
-                .orElseThrow(() -> new EntityNotFoundException("Hospital with id: " + hospitalId + " not found"));
+        return hospitalRepository.findById(hospitalId).map(hospitalMapper::hospitalToHospitalDto).orElseThrow(() -> new EntityNotFoundException("Hospital with id: " + hospitalId + " not found"));
     }
 }

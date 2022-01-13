@@ -1,6 +1,5 @@
 package com.softserve.clinic.dto;
 
-import lombok.Data;
 import lombok.Value;
 
 import javax.validation.constraints.NotBlank;

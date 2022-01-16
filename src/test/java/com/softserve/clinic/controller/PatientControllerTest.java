@@ -1,9 +1,14 @@
 package com.softserve.clinic.controller;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserve.clinic.dto.AppointmentDto;
 import com.softserve.clinic.dto.PatientDto;
 import com.softserve.clinic.service.PatientService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -14,10 +19,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-import static java.time.format.DateTimeFormatter.ofPattern;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(PatientController.class)
 class PatientControllerTest {
@@ -25,174 +31,170 @@ class PatientControllerTest {
     @MockBean
     private PatientService patientService;
     @MockBean
+    private PatientDto patientDto;
+    @MockBean
     private AppointmentDto appointmentDto;
 
     @Autowired
+    private ObjectMapper objectMapper;
+    @Autowired
     private MockMvc mockMvc;
 
-    private static final UUID ID = UUID.randomUUID();
-    private static final String USERNAME = "ivannomad";
-    private static final String PASSWORD = "password";
-    private static final String FIRST_NAME = "Ivan";
-    private static final String SECOND_NAME = "Ivanov";
-    private static final String EMAIL = "ivan@mail.com";
-    private static final String CONTACT_NUMBER = "380501112233";
-    private static final LocalDate BIRTH_DATE = LocalDate.of(1960, 1, 1);
-    private static final String FORMATTED_BIRTH_DATE = BIRTH_DATE.format(ofPattern("yyyy-MM-dd"));
+    private static final UUID PATIENT_ID = UUID.randomUUID();
+    private static final UUID APPOINTMENT_ID = UUID.randomUUID();
+
 
     @Test
     void shouldGetAllPatients() throws Exception {
-        List<PatientDto> patientDtoList = List.of(new PatientDto(
-                ID, USERNAME, PASSWORD, FIRST_NAME, SECOND_NAME, EMAIL, CONTACT_NUMBER, BIRTH_DATE));
+        List<PatientDto> expected = List.of(patientDto);
 
-        when(patientService.getAllPatients()).thenReturn(patientDtoList);
+        when(patientService.getAllPatients()).thenReturn(expected);
 
-        mockMvc.perform(get("/patients"))
+        String response = mockMvc.perform(get("/patients"))
                 .andExpectAll(
                         status().isOk(),
-                        content().contentType(MediaType.APPLICATION_JSON),
-                        jsonPath("$[0].id").isNotEmpty(),
-                        jsonPath("$[0].username").value(USERNAME),
-                        jsonPath("$[0].password").value(PASSWORD),
-                        jsonPath("$[0].firstName").value(FIRST_NAME),
-                        jsonPath("$[0].secondName").value(SECOND_NAME),
-                        jsonPath("$[0].email").value(EMAIL),
-                        jsonPath("$[0].contactNumber").value(CONTACT_NUMBER),
-                        jsonPath("$[0].birthDate").value(FORMATTED_BIRTH_DATE)
-                );
+                        content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        List<PatientDto> actual = objectMapper.readValue(response, new TypeReference<>() {
+        });
+
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void shouldGetPatientById() throws Exception {
-        PatientDto patientDto = new PatientDto(
-                ID, USERNAME, PASSWORD, FIRST_NAME, SECOND_NAME, EMAIL, CONTACT_NUMBER, BIRTH_DATE);
+        PatientDto expected = patientDto;
 
-        when(patientService.getPatientById(ID)).thenReturn(patientDto);
+        when(patientService.getPatientById(PATIENT_ID)).thenReturn(patientDto);
 
-        mockMvc.perform(get("/patients/{id}", ID))
+        String response = mockMvc.perform(get("/patients/{patientId}", PATIENT_ID))
                 .andExpectAll(
                         status().isOk(),
-                        content().contentType(MediaType.APPLICATION_JSON),
-                        jsonPath("$.id").isNotEmpty(),
-                        jsonPath("$.username").value(USERNAME),
-                        jsonPath("$.password").value(PASSWORD),
-                        jsonPath("$.firstName").value(FIRST_NAME),
-                        jsonPath("$.secondName").value(SECOND_NAME),
-                        jsonPath("$.email").value(EMAIL),
-                        jsonPath("$.contactNumber").value(CONTACT_NUMBER),
-                        jsonPath("$.birthDate").value(FORMATTED_BIRTH_DATE)
-                );
+                        content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        PatientDto actual = objectMapper.readValue(response, PatientDto.class);
+
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
-    void shouldCreatePatient() throws Exception {
+    void whenDataIsValidShouldCreatePatient() throws Exception {
+        when(patientService.createPatient(patientDto)).thenReturn(patientDto);
+
         mockMvc.perform(post("/patients")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"ivannomad\"," +
+                        .content("{\"username\":\"username\"," +
                                 "\"password\":\"password\"," +
-                                "\"firstName\":\"Ivan\"," +
-                                "\"secondName\":\"Ivanov\"," +
-                                "\"email\":\"ivan@mail.com\"," +
-                                "\"contactNumber\":\"38051112233\"," +
-                                "\"birthDate\":\"1960-01-01\"" +
-                                "}"))
+                                "\"firstName\":\"firstName\"," +
+                                "\"secondName\":\"secondName\"," +
+                                "\"email\":\"email@mail.com\"," +
+                                "\"contactNumber\":\"contactNumber\"," +
+                                "\"birthDate\":\"1960-01-01\"}"))
                 .andExpect(status().isCreated());
     }
 
-    @Test
-    void creatingFailsWhenPatientUsernameIsBlank() throws Exception {
+    @ParameterizedTest(name = "{index} argument validation")
+    @CsvFileSource(resources = "/patients.csv")
+    void creatingFailsWhenDataIsNotValid(ArgumentsAccessor argumentsAccessor) throws Exception {
+        PatientDto patient = new PatientDto(PATIENT_ID,
+                argumentsAccessor.getString(0),
+                argumentsAccessor.getString(1),
+                argumentsAccessor.getString(2),
+                argumentsAccessor.getString(3),
+                argumentsAccessor.getString(4),
+                argumentsAccessor.getString(5),
+                argumentsAccessor.get(6, LocalDate.class));
+
+        String request = objectMapper.writeValueAsString(patient);
+
         mockMvc.perform(post("/patients")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"\"," +
-                                "\"password\":\"password\"," +
-                                "\"firstName\":\"Ivan\"," +
-                                "\"secondName\":\"Ivanov\"," +
-                                "\"email\":\"ivan@mail.com\"," +
-                                "\"contactNumber\":\"38051112233\"," +
-                                "\"birthDate\":\"1960-01-01\"" +
-                                "}"))
+                        .content(request))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void creatingFailsWhenPatientEmailIsNotValid() throws Exception {
-        mockMvc.perform(post("/patients")
+    void whenDataIsValidShouldUpdatePatient() throws Exception {
+        mockMvc.perform(put("/patients/{patientId}", PATIENT_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"ivannomad\"," +
+                        .content("{\"username\":\"username\"," +
                                 "\"password\":\"password\"," +
-                                "\"firstName\":\"Ivan\"," +
-                                "\"secondName\":\"Ivanov\"," +
-                                "\"email\":\"email\"," +
-                                "\"contactNumber\":\"38051112233\"," +
-                                "\"birthDate\":\"1960-01-01\"" +
-                                "}"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void shouldUpdatePatient() throws Exception {
-        mockMvc.perform(put("/patients/{id}", ID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"ivannomad\"," +
-                                "\"password\":\"password\"," +
-                                "\"firstName\":\"Ivan\"," +
-                                "\"secondName\":\"Ivanov\"," +
-                                "\"email\":\"ivan@mail.com\"," +
-                                "\"contactNumber\":\"38051112233\"," +
-                                "\"birthDate\":\"1960-01-01\"" +
-                                "}"))
+                                "\"firstName\":\"firstName\"," +
+                                "\"secondName\":\"secondName\"," +
+                                "\"email\":\"email@mail.com\"," +
+                                "\"contactNumber\":\"contactNumber\"," +
+                                "\"birthDate\":\"1960-01-01\"}"))
                 .andExpect(status().isOk());
     }
 
-    @Test
-    void updatingFailsWhenPatientUsernameIsBlank() throws Exception {
-        mockMvc.perform(put("/patients/{id}", ID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"\"," +
-                                "\"password\":\"\"," +
-                                "\"firstName\":\"Ivan\"," +
-                                "\"secondName\":\"Ivanov\"," +
-                                "\"email\":\"ivan@mail.com\"," +
-                                "\"contactNumber\":\"38051112233\"," +
-                                "\"birthDate\":\"1960-01-01\"" +
-                                "}"))
-                .andExpect(status().isBadRequest());
-    }
+    @ParameterizedTest(name = "{index} argument validation")
+    @CsvFileSource(resources = "/patients.csv")
+    void updatingFailsWhenDataIsNotValid(ArgumentsAccessor argumentsAccessor) throws Exception {
+        PatientDto patient = new PatientDto(PATIENT_ID,
+                argumentsAccessor.getString(0),
+                argumentsAccessor.getString(1),
+                argumentsAccessor.getString(2),
+                argumentsAccessor.getString(3),
+                argumentsAccessor.getString(4),
+                argumentsAccessor.getString(5),
+                argumentsAccessor.get(6, LocalDate.class));
 
-    @Test
-    void updatingFailsWhenPatientEmailIsNotValid() throws Exception {
-        mockMvc.perform(put("/patients/{id}", ID)
+        String request = objectMapper.writeValueAsString(patient);
+
+        mockMvc.perform(put("/patients/{patientId}", PATIENT_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"ivannomad\"," +
-                                "\"password\":\"password\"," +
-                                "\"firstName\":\"Ivan\"," +
-                                "\"secondName\":\"Ivanov\"," +
-                                "\"email\":\"email\"," +
-                                "\"contactNumber\":\"38051112233\"," +
-                                "\"birthDate\":\"1960-01-01\"" +
-                                "}"))
+                        .content(request))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void shouldDeletePatientById() throws Exception {
-        mockMvc.perform(delete("/patients/{id}", ID))
+        mockMvc.perform(delete("/patients/{patientId}", PATIENT_ID))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     void shouldMakeAppointment() throws Exception {
-        mockMvc.perform(post("/patients/{patientId}/appointments/{appId}", ID, ID))
-                .andExpect(status().isCreated());
+        AppointmentDto expected = appointmentDto;
+
+        when(patientService.makeAppointment(PATIENT_ID, APPOINTMENT_ID)).thenReturn(appointmentDto);
+
+        String response = mockMvc.perform(post("/patients/{patientId}/appointments/{appId}", PATIENT_ID, APPOINTMENT_ID))
+                .andExpectAll(
+                        status().isCreated(),
+                        content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        AppointmentDto actual = objectMapper.readValue(response, AppointmentDto.class);
+
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void shouldGetAllAppointments() throws Exception {
-        List<AppointmentDto> appointmentDtoList = List.of(appointmentDto);
+        List<AppointmentDto> expected = List.of(appointmentDto);
 
-        when(patientService.getAllPatientAppointments(ID)).thenReturn(appointmentDtoList);
+        when(patientService.getAllPatientAppointments(PATIENT_ID)).thenReturn(expected);
 
-        mockMvc.perform(get("/patients/{patientId}/appointments", ID))
-                .andExpect(status().isOk());
+        String response = mockMvc.perform(get("/patients/{patientId}/appointments", PATIENT_ID))
+                .andExpectAll(
+                        status().isOk(),
+                        content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        List<AppointmentDto> actual = objectMapper.readValue(response, new TypeReference<>() {
+        });
+
+        assertThat(actual).isEqualTo(expected);
     }
 }

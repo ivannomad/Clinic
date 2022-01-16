@@ -1,0 +1,12 @@
+, password, firstName, secondName, email@gmail.com, contactNumber, 1960-01-01
+username, , firstName, secondName, email@gmail.com, contactNumber, 1960-01-01
+username, password, , secondName, email@gmail.com, contactNumber, 1960-01-01
+username, password, firstName, , email@gmail.com, contactNumber, 1960-01-01
+username, password, firstName, secondName, , contactNumber, 1960-01-01
+username, password, firstName, secondName, email@gmail.com, , 1960-01-01
+username, password, firstName, secondName, email@gmail.com, contactNumber,
+username, password, firstName, secondName, email, contactNumber, 1960-01-01
+username, password, firstName, secondName, email@gmail.com, contactNumber, 3333-01-01
+
+
+

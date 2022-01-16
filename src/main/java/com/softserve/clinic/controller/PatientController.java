@@ -5,6 +5,7 @@ import com.softserve.clinic.dto.PatientDto;
 import com.softserve.clinic.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,9 +30,15 @@ public class PatientController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public PatientDto createPatient(@RequestBody @Valid PatientDto patientDto) {
-        return patientService.createPatient(patientDto);
+    public ResponseEntity<PatientDto> createPatient(@RequestBody @Valid PatientDto patientDto) {
+        PatientDto savedPatient = patientService.createPatient(patientDto);
+        return new ResponseEntity<>(savedPatient, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{patientId}")
+    public ResponseEntity<PatientDto> updatePatient(@RequestBody @Valid PatientDto patientDto, @PathVariable UUID patientId) {
+        PatientDto savedPatient = patientService.updatePatient(patientDto, patientId);
+        return new ResponseEntity<>(savedPatient, HttpStatus.OK);
     }
 
     @DeleteMapping("/{patientId}")
@@ -40,19 +47,14 @@ public class PatientController {
         patientService.deletePatientById(patientId);
     }
 
-    @PutMapping("/{patientId}")
-    public void updatePatient(@RequestBody @Valid PatientDto patientDto, @PathVariable UUID patientId) {
-        patientService.updatePatient(patientDto, patientId);
+    @GetMapping("/{patientId}/appointments")
+    public List<AppointmentDto> getAllPatientAppointments(@PathVariable UUID patientId) {
+        return patientService.getAllPatientAppointments(patientId);
     }
 
     @PostMapping("/{patientId}/appointments/{appId}")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void makeAppointment(@PathVariable UUID patientId, @PathVariable UUID appId) {
-        patientService.makeAppointment(patientId, appId);
-    }
-
-    @GetMapping("/{patientId}/appointments")
-    public List<AppointmentDto> getAllAppointments(@PathVariable UUID patientId) {
-        return patientService.getAllPatientAppointments(patientId);
+    public ResponseEntity<AppointmentDto> makeAppointment(@PathVariable UUID patientId, @PathVariable UUID appId) {
+        AppointmentDto savedAppointment = patientService.makeAppointment(patientId, appId);
+        return new ResponseEntity<>(savedAppointment, HttpStatus.CREATED);
     }
 }

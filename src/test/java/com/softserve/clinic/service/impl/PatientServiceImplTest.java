@@ -82,26 +82,29 @@ class PatientServiceImplTest {
 
     @Test
     void shouldCreatePatient() {
+        PatientDto expected = patientDto;
+
         when(patientMapper.patientDtoToPatient(patientDto)).thenReturn(patient);
         when(patientRepository.save(patient)).thenReturn(patient);
+        when(patientMapper.patientToPatientDto(patient)).thenReturn(patientDto);
 
-        patientService.createPatient(patientDto);
+        PatientDto actual = patientService.createPatient(patientDto);
 
-        verify(patientMapper, times(1)).patientDtoToPatient(patientDto);
-        verify(patientRepository, times(1)).save(patient);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
     void shouldUpdatePatient() {
+        PatientDto expected = patientDto;
+
         when(patientRepository.findById(PATIENT_ID)).thenReturn(Optional.of(patient));
         doNothing().when(patientMapper).updatePatientFromPatientDto(patientDto, patient);
         when(patientRepository.save(patient)).thenReturn(patient);
+        when(patientMapper.patientToPatientDto(patient)).thenReturn(patientDto);
 
-        patientService.updatePatient(patientDto, PATIENT_ID);
+        PatientDto actual = patientService.updatePatient(patientDto, PATIENT_ID);
 
-        verify(patientRepository, times(1)).findById(PATIENT_ID);
-        verify(patientMapper, times(1)).updatePatientFromPatientDto(patientDto, patient);
-        verify(patientRepository, times(1)).save(patient);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test
@@ -129,15 +132,16 @@ class PatientServiceImplTest {
 
     @Test
     void shouldMakeAppointment() {
+        AppointmentDto expected = appointmentDto;
+
         when(appointmentRepository.findAppointmentByIdAndPatientIsNull(APPOINTMENT_ID)).thenReturn(Optional.of(appointment));
         when(patientRepository.findById(PATIENT_ID)).thenReturn(Optional.of(patient));
         when(appointmentRepository.save(appointment)).thenReturn(appointment);
+        when(appointmentMapper.appointmentToAppointmentDto(appointment)).thenReturn(appointmentDto);
 
-        patientService.makeAppointment(PATIENT_ID, APPOINTMENT_ID);
+        AppointmentDto actual = patientService.makeAppointment(PATIENT_ID, APPOINTMENT_ID);
 
-        verify(appointmentRepository, times(1)).findAppointmentByIdAndPatientIsNull(APPOINTMENT_ID);
-        verify(patientRepository, times(1)).findById(PATIENT_ID);
-        verify(appointmentRepository, times(1)).save(appointment);
+        assertThat(actual).isEqualTo(expected);
     }
 
     @Test

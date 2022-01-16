@@ -48,11 +48,12 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public void updatePatient(PatientDto patientDto, UUID patientId) {
+    public PatientDto updatePatient(PatientDto patientDto, UUID patientId) {
         Patient patient = patientRepository.findById(patientId).orElseThrow(
                 () -> new EntityNotFoundException("Unable to find Patient with id " + patientId));
         patientMapper.updatePatientFromPatientDto(patientDto, patient);
-        patientRepository.save(patient);
+        Patient savedPatient = patientRepository.save(patient);
+        return patientMapper.patientToPatientDto(savedPatient);
     }
 
     @Override
@@ -65,13 +66,14 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public void makeAppointment(UUID patientId, UUID appId) {
+    public AppointmentDto makeAppointment(UUID patientId, UUID appId) {
         Appointment appointment = appointmentRepository.findAppointmentByIdAndPatientIsNull(appId).orElseThrow(
                 () -> new EntityNotFoundException("Unable to find Appointment with id " + appId));
         Patient patient = patientRepository.findById(patientId).orElseThrow(
                 () -> new EntityNotFoundException("Unable to find Patient with id " + patientId));
         appointment.setPatient(patient);
-        appointmentRepository.save(appointment);
+        Appointment savedAppointment = appointmentRepository.save(appointment);
+        return appointmentMapper.appointmentToAppointmentDto(savedAppointment);
     }
 
     @Override

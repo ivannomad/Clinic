@@ -10,8 +10,14 @@ import java.util.UUID;
 
 @Value
 public class AppointmentDto implements Serializable {
+
     UUID id;
-    @Future @NotNull LocalDateTime dateAndTime;
+
+    @Future @NotNull (message = "Date and Time may not be null")
+    LocalDateTime dateAndTime;
+
+    @NotNull (message = "Doctor may not be null")
     DoctorDto doctor;
+
     PatientDto patient;
 }

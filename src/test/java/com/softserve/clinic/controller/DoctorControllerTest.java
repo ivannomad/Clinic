@@ -1,15 +1,21 @@
 package com.softserve.clinic.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserve.clinic.dto.AppointmentDto;
 import com.softserve.clinic.dto.DoctorDto;
 import com.softserve.clinic.service.DoctorService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,15 +26,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(DoctorController.class)
 class DoctorControllerTest {
 
-    @MockBean
-    private DoctorService doctorService;
-    @MockBean
-    private AppointmentDto appointmentDto;
-
     @Autowired
     private MockMvc mockMvc;
 
-    private static final UUID ID = UUID.randomUUID();
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private DoctorService doctorService;
+
+    @MockBean
+    private DoctorDto doctorDto;
+
+    @MockBean
+    private AppointmentDto appointmentDto;
+
+    // Doctor
+    private static final UUID DOCTOR_ID = UUID.randomUUID();
     private static final String USERNAME = "ivannomad";
     private static final String PASSWORD = "password";
     private static final String FIRST_NAME = "Ivan";
@@ -36,10 +50,20 @@ class DoctorControllerTest {
     private static final String EMAIL = "ivan@mail.com";
     private static final String CONTACT_NUMBER = "380501112233";
 
+    // Appointment
+    private static final UUID APPOINTMENT_ID = UUID.randomUUID();
+    private static final LocalDateTime FUTURE_DATE_AND_TIME = LocalDateTime.now().plusDays(1);
+    private static final LocalDateTime PAST_DATE_AND_TIME = LocalDateTime.now().minusDays(1);
+
+    @BeforeEach
+    void init() {
+        doctorDto = new DoctorDto(
+                DOCTOR_ID, USERNAME, PASSWORD, FIRST_NAME, SECOND_NAME, EMAIL, CONTACT_NUMBER);
+    }
+
     @Test
     void shouldGetAllDoctors() throws Exception {
-        List<DoctorDto> doctorDtoList = List.of(new DoctorDto(
-                ID, USERNAME, PASSWORD, FIRST_NAME, SECOND_NAME, EMAIL, CONTACT_NUMBER));
+        List<DoctorDto> doctorDtoList = List.of(doctorDto);
 
         when(doctorService.getAllDoctors()).thenReturn(doctorDtoList);
 
@@ -59,12 +83,9 @@ class DoctorControllerTest {
 
     @Test
     void shouldGetDoctorById() throws Exception {
-        DoctorDto doctorDto = new DoctorDto(
-                ID, USERNAME, PASSWORD, FIRST_NAME, SECOND_NAME, EMAIL, CONTACT_NUMBER);
+        when(doctorService.getDoctorById(DOCTOR_ID)).thenReturn(doctorDto);
 
-        when(doctorService.getDoctorById(ID)).thenReturn(doctorDto);
-
-        mockMvc.perform(get("/doctors/{doctorId}", ID))
+        mockMvc.perform(get("/doctors/{doctorId}", DOCTOR_ID))
                 .andExpectAll(
                         status().isOk(),
                         content().contentType(MediaType.APPLICATION_JSON),
@@ -81,100 +102,100 @@ class DoctorControllerTest {
     @Test
     void shouldCreateDoctor() throws Exception {
         mockMvc.perform(post("/doctors")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"ivannomad\"," +
-                                "\"password\":\"password\"," +
-                                "\"firstName\":\"Ivan\"," +
-                                "\"secondName\":\"Ivanov\"," +
-                                "\"email\":\"ivan@mail.com\"," +
-                                "\"contactNumber\":\"38051112233\"" +
-                                "}"))
+                        .content(objectMapper.writeValueAsString(doctorDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
     }
 
-    @Test
-    void creatingFailsWhenDoctorUsernameIsBlank() throws Exception {
-        mockMvc.perform(post("/doctors")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"\"," +
-                                "\"password\":\"password\"," +
-                                "\"firstName\":\"Ivan\"," +
-                                "\"secondName\":\"Ivanov\"," +
-                                "\"email\":\"ivan@mail.com\"," +
-                                "\"contactNumber\":\"38051112233\"" +
-                                "}"))
-                .andExpect(status().isBadRequest());
-    }
+    @ParameterizedTest(name = "{index} argument validation")
+    @CsvFileSource(resources = "/doctors.csv")
+    void creatingFailsWhenDoctorDataIsNotValid(ArgumentsAccessor accessor) throws Exception {
+        DoctorDto doctorDto = new DoctorDto(DOCTOR_ID,
+                accessor.getString(0),
+                accessor.getString(1),
+                accessor.getString(2),
+                accessor.getString(3),
+                accessor.getString(4),
+                accessor.getString(5));
 
-    @Test
-    void creatingFailsWhenDoctorEmailIsNotValid() throws Exception {
         mockMvc.perform(post("/doctors")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"ivannomad\"," +
-                                "\"password\":\"password\"," +
-                                "\"firstName\":\"Ivan\"," +
-                                "\"secondName\":\"Ivanov\"," +
-                                "\"email\":\"email\"," +
-                                "\"contactNumber\":\"38051112233\"" +
-                                "}"))
+                        .content(objectMapper.writeValueAsString(doctorDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void shouldUpdateDoctorById() throws Exception {
-        mockMvc.perform(put("/doctors/{doctorId}", ID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"ivannomad\"," +
-                                "\"password\":\"password\"," +
-                                "\"firstName\":\"Ivan\"," +
-                                "\"secondName\":\"Ivanov\"," +
-                                "\"email\":\"ivan@mail.com\"," +
-                                "\"contactNumber\":\"38051112233\"" +
-                                "}"))
+        mockMvc.perform(put("/doctors/{doctorId}", DOCTOR_ID)
+                        .content(objectMapper.writeValueAsString(doctorDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
-    @Test
-    void updatingFailsWhenDoctorUsernameIsBlank() throws Exception {
-        mockMvc.perform(put("/doctors/{doctorId}", ID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"\"," +
-                                "\"password\":\"password\"," +
-                                "\"firstName\":\"Ivan\"," +
-                                "\"secondName\":\"Ivanov\"," +
-                                "\"email\":\"ivan@mail.com\"," +
-                                "\"contactNumber\":\"38051112233\"" +
-                                "}"))
+    @ParameterizedTest(name = "{index} argument validation")
+    @CsvFileSource(resources = "/doctors.csv")
+    void updatingFailsWhenDoctorsDataIsNotValid(ArgumentsAccessor accessor) throws Exception {
+        DoctorDto doctorDto = new DoctorDto(DOCTOR_ID,
+                accessor.getString(0),
+                accessor.getString(1),
+                accessor.getString(2),
+                accessor.getString(3),
+                accessor.getString(4),
+                accessor.getString(5));
+
+        mockMvc.perform(put("/doctors/{doctorId}", DOCTOR_ID)
+                        .content(objectMapper.writeValueAsString(doctorDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void shouldDeleteDoctorById() throws Exception {
-        mockMvc.perform(delete("/doctors/{doctorId}", ID))
+        mockMvc.perform(delete("/doctors/{doctorId}", DOCTOR_ID))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     void shouldCreateAppointment() throws Exception {
-        mockMvc.perform(post("/doctors/{doctorId}/appointments", ID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"dateAndTime\":\"2999-01-09T20:45:08.3408987\"}"))
+        AppointmentDto appointmentDto = new AppointmentDto(
+                APPOINTMENT_ID, FUTURE_DATE_AND_TIME, doctorDto, null);
+
+        mockMvc.perform(post("/doctors/{doctorId}/appointments", DOCTOR_ID)
+                        .content(objectMapper.writeValueAsString(appointmentDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
     }
 
     @Test
-    void creatingFailsWhenDateIsPast() throws Exception {
-        mockMvc.perform(post("/doctors/{doctorId}/appointments", ID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"dateAndTime\":\"1000-01-09T20:45:08.3408987\"}"))
+    void creatingFailsWhenAppointmentsDateIsPast() throws Exception {
+        AppointmentDto appointmentDto = new AppointmentDto(
+                APPOINTMENT_ID, PAST_DATE_AND_TIME, doctorDto, null);
+
+        mockMvc.perform(post("/doctors/{doctorId}/appointments", DOCTOR_ID)
+                        .content(objectMapper.writeValueAsString(appointmentDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void creatingFailsWhenDateIsNull() throws Exception {
-        mockMvc.perform(post("/doctors/{doctorId}/appointments", ID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"dateAndTime\":\"\"}"))
+    void creatingFailsWhenAppointmentsDateIsNull() throws Exception {
+        AppointmentDto appointmentDto = new AppointmentDto(
+                APPOINTMENT_ID, null, doctorDto, null);
+
+        mockMvc.perform(post("/doctors/{doctorId}/appointments", DOCTOR_ID)
+                        .content(objectMapper.writeValueAsString(appointmentDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void creatingFailsWhenAppointmentsDoctorIsNull() throws Exception {
+        AppointmentDto appointmentDto = new AppointmentDto(
+                APPOINTMENT_ID, FUTURE_DATE_AND_TIME, null, null);
+
+        mockMvc.perform(post("/doctors/{doctorId}/appointments", DOCTOR_ID)
+                        .content(objectMapper.writeValueAsString(appointmentDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
@@ -182,9 +203,9 @@ class DoctorControllerTest {
     void getFreeDoctorAppointments() throws Exception {
         List<AppointmentDto> appointmentDtoList = List.of(appointmentDto);
 
-        when(doctorService.getDoctorFreeAppointments(ID)).thenReturn(appointmentDtoList);
+        when(doctorService.getDoctorFreeAppointments(DOCTOR_ID)).thenReturn(appointmentDtoList);
 
-        mockMvc.perform(get("/doctors/{doctorId}/appointments/free", ID))
+        mockMvc.perform(get("/doctors/{doctorId}/appointments/free", DOCTOR_ID))
                 .andExpect(status().isOk());
     }
 
@@ -192,9 +213,9 @@ class DoctorControllerTest {
     void getDoctorAppointments() throws Exception {
         List<AppointmentDto> appointmentDtoList = List.of(appointmentDto);
 
-        when(doctorService.getDoctorAppointments(ID)).thenReturn(appointmentDtoList);
+        when(doctorService.getDoctorAppointments(DOCTOR_ID)).thenReturn(appointmentDtoList);
 
-        mockMvc.perform(get("/doctors/{doctorId}/appointments/not-free", ID))
+        mockMvc.perform(get("/doctors/{doctorId}/appointments/not-free", DOCTOR_ID))
                 .andExpect(status().isOk());
     }
 }

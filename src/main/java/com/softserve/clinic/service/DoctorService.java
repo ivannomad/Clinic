@@ -13,9 +13,9 @@ public interface DoctorService {
 
     DoctorDto getDoctorById(UUID doctorId);
 
-    void createDoctor(DoctorDto doctorDto);
+    DoctorDto createDoctor(DoctorDto doctorDto);
 
-    void updateDoctorById(DoctorDto doctorDto, UUID doctorId);
+    DoctorDto updateDoctorById(DoctorDto doctorDto, UUID doctorId);
 
     void deleteDoctorById(UUID doctorId);
 
@@ -23,7 +23,7 @@ public interface DoctorService {
 
     List<AppointmentDto> getDoctorAppointments(UUID doctorId);
 
-    void createAppointment(UUID doctorId, AppointmentDto appointmentDto);
+    AppointmentDto createAppointment(UUID doctorId, AppointmentDto appointmentDto);
 }
 
 

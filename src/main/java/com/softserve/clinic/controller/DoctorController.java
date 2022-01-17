@@ -5,6 +5,7 @@ import com.softserve.clinic.dto.DoctorDto;
 import com.softserve.clinic.service.DoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,14 +30,17 @@ public class DoctorController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void createDoctor(@RequestBody @Valid DoctorDto doctorDto) {
-        doctorService.createDoctor(doctorDto);
+    public ResponseEntity<DoctorDto> createDoctor(@RequestBody @Valid DoctorDto doctorDto) {
+        DoctorDto newDoctor = doctorService.createDoctor(doctorDto);
+
+        return new ResponseEntity<>(newDoctor, HttpStatus.CREATED);
     }
 
     @PutMapping("/{doctorId}")
-    public void updateDoctorById(@RequestBody @Valid DoctorDto doctorDto, @PathVariable UUID doctorId) {
-        doctorService.updateDoctorById(doctorDto, doctorId);
+    public ResponseEntity<DoctorDto> updateDoctorById(@RequestBody @Valid DoctorDto doctorDto, @PathVariable UUID doctorId) {
+        DoctorDto updatedDoctor = doctorService.updateDoctorById(doctorDto, doctorId);
+
+        return new ResponseEntity<>(updatedDoctor, HttpStatus.OK);
     }
 
     @DeleteMapping("/{doctorId}")
@@ -46,9 +50,10 @@ public class DoctorController {
     }
 
     @PostMapping("/{doctorId}/appointments")
-    @ResponseStatus(HttpStatus.CREATED)
-    public void createAppointment(@PathVariable UUID doctorId, @RequestBody @Valid AppointmentDto appointmentDto) {
-        doctorService.createAppointment(doctorId, appointmentDto);
+    public ResponseEntity<AppointmentDto> createAppointment(@PathVariable UUID doctorId, @RequestBody @Valid AppointmentDto appointmentDto) {
+        AppointmentDto newAppointment = doctorService.createAppointment(doctorId, appointmentDto);
+
+        return new ResponseEntity<>(appointmentDto, HttpStatus.CREATED);
     }
 
     @GetMapping("/{doctorId}/appointments/free")

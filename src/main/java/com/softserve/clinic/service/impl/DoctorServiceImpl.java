@@ -43,17 +43,19 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public void createDoctor(DoctorDto doctorDto) {
-        Doctor doctor = doctorMapper.doctorDtoToDoctor(doctorDto);
-        doctorRepository.save(doctor);
+    public DoctorDto createDoctor(DoctorDto doctorDto) {
+        Doctor doctor = doctorRepository.save(doctorMapper.doctorDtoToDoctor(doctorDto));
+        return doctorMapper.doctorToDoctorDto(doctor);
     }
 
     @Override
-    public void updateDoctorById(DoctorDto doctorDto, UUID doctorId) {
+    public DoctorDto updateDoctorById(DoctorDto doctorDto, UUID doctorId) {
         Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(
                 () -> new EntityNotFoundException("Unable to find Doctor with id " + doctorId));
         doctorMapper.updateDoctorFromDoctorDto(doctorDto, doctor);
         doctorRepository.save(doctor);
+
+        return doctorMapper.doctorToDoctorDto(doctor);
     }
 
     @Override
@@ -88,11 +90,13 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public void createAppointment(UUID doctorId, AppointmentDto appointmentDto) {
+    public AppointmentDto createAppointment(UUID doctorId, AppointmentDto appointmentDto) {
         Doctor doctor = doctorRepository.findById(doctorId).orElseThrow(
                 () -> new EntityNotFoundException("Unable to find Doctor with id " + doctorId));
         Appointment appointment = appointmentMapper.appointmentDtoToAppointment(appointmentDto);
         appointment.setDoctor(doctor);
         appointmentRepository.save(appointment);
+
+        return appointmentMapper.appointmentToAppointmentDto(appointment);
     }
 }

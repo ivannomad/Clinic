@@ -53,7 +53,7 @@ public class DoctorController {
     public ResponseEntity<AppointmentDto> createAppointment(@PathVariable UUID doctorId, @RequestBody @Valid AppointmentDto appointmentDto) {
         AppointmentDto newAppointment = doctorService.createAppointment(doctorId, appointmentDto);
 
-        return new ResponseEntity<>(appointmentDto, HttpStatus.CREATED);
+        return new ResponseEntity<>(newAppointment, HttpStatus.CREATED);
     }
 
     @GetMapping("/{doctorId}/appointments/free")

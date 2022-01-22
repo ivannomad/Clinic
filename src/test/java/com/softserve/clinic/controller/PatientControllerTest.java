@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserve.clinic.dto.AppointmentDto;
 import com.softserve.clinic.dto.PatientDto;
 import com.softserve.clinic.service.PatientService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
@@ -40,9 +41,20 @@ class PatientControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    // Patient
     private static final UUID PATIENT_ID = UUID.randomUUID();
+    private static final String FIRST_NAME = "Ivan";
+    private static final String SECOND_NAME = "Ivanov";
+    private static final String CONTACT_NUMBER = "380501112233";
+    private static final LocalDate BIRTH_DATE = LocalDate.parse("1960-01-01");
+
     private static final UUID APPOINTMENT_ID = UUID.randomUUID();
 
+    @BeforeEach
+    void init() {
+        patientDto = new PatientDto(
+                PATIENT_ID, FIRST_NAME, SECOND_NAME, CONTACT_NUMBER, BIRTH_DATE);
+    }
 
     @Test
     void shouldGetAllPatients() throws Exception {
@@ -89,27 +101,19 @@ class PatientControllerTest {
 
         mockMvc.perform(post("/patients")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"username\"," +
-                                "\"password\":\"password\"," +
-                                "\"firstName\":\"firstName\"," +
-                                "\"secondName\":\"secondName\"," +
-                                "\"email\":\"email@mail.com\"," +
-                                "\"contactNumber\":\"contactNumber\"," +
-                                "\"birthDate\":\"1960-01-01\"}"))
+                        .content(objectMapper.writeValueAsString(patientDto)))
                 .andExpect(status().isCreated());
     }
 
     @ParameterizedTest(name = "{index} argument validation")
     @CsvFileSource(resources = "/patients.csv")
     void creatingFailsWhenDataIsNotValid(ArgumentsAccessor argumentsAccessor) throws Exception {
-        PatientDto patient = new PatientDto(PATIENT_ID,
-                argumentsAccessor.getString(0),
+        PatientDto patient = new PatientDto(
+                UUID.fromString(argumentsAccessor.getString(0)),
                 argumentsAccessor.getString(1),
                 argumentsAccessor.getString(2),
                 argumentsAccessor.getString(3),
-                argumentsAccessor.getString(4),
-                argumentsAccessor.getString(5),
-                argumentsAccessor.get(6, LocalDate.class));
+                argumentsAccessor.get(4, LocalDate.class));
 
         String request = objectMapper.writeValueAsString(patient);
 
@@ -123,27 +127,19 @@ class PatientControllerTest {
     void whenDataIsValidShouldUpdatePatient() throws Exception {
         mockMvc.perform(put("/patients/{patientId}", PATIENT_ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"username\":\"username\"," +
-                                "\"password\":\"password\"," +
-                                "\"firstName\":\"firstName\"," +
-                                "\"secondName\":\"secondName\"," +
-                                "\"email\":\"email@mail.com\"," +
-                                "\"contactNumber\":\"contactNumber\"," +
-                                "\"birthDate\":\"1960-01-01\"}"))
+                        .content(objectMapper.writeValueAsString(patientDto)))
                 .andExpect(status().isOk());
     }
 
     @ParameterizedTest(name = "{index} argument validation")
     @CsvFileSource(resources = "/patients.csv")
     void updatingFailsWhenDataIsNotValid(ArgumentsAccessor argumentsAccessor) throws Exception {
-        PatientDto patient = new PatientDto(PATIENT_ID,
-                argumentsAccessor.getString(0),
+        PatientDto patient = new PatientDto(
+                UUID.fromString(argumentsAccessor.getString(0)),
                 argumentsAccessor.getString(1),
                 argumentsAccessor.getString(2),
                 argumentsAccessor.getString(3),
-                argumentsAccessor.getString(4),
-                argumentsAccessor.getString(5),
-                argumentsAccessor.get(6, LocalDate.class));
+                argumentsAccessor.get(4, LocalDate.class));
 
         String request = objectMapper.writeValueAsString(patient);
 

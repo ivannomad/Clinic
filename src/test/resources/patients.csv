@@ -1,12 +1,8 @@
-, password, firstName, secondName, email@gmail.com, contactNumber, 1960-01-01
-username, , firstName, secondName, email@gmail.com, contactNumber, 1960-01-01
-username, password, , secondName, email@gmail.com, contactNumber, 1960-01-01
-username, password, firstName, , email@gmail.com, contactNumber, 1960-01-01
-username, password, firstName, secondName, , contactNumber, 1960-01-01
-username, password, firstName, secondName, email@gmail.com, , 1960-01-01
-username, password, firstName, secondName, email@gmail.com, contactNumber,
-username, password, firstName, secondName, email, contactNumber, 1960-01-01
-username, password, firstName, secondName, email@gmail.com, contactNumber, 3333-01-01
+dc11cf11-c77c-4db0-88e8-ba0f2cb20060, , secondName, contactNumber, 1960-01-01
+dc11cf11-c77c-4db0-88e8-ba0f2cb20060, firstName, , contactNumber, 1960-01-01
+dc11cf11-c77c-4db0-88e8-ba0f2cb20060, firstName, secondName, , 1960-01-01
+dc11cf11-c77c-4db0-88e8-ba0f2cb20060, firstName, secondName, contactNumber,
+dc11cf11-c77c-4db0-88e8-ba0f2cb20060, firstName, secondName, contactNumber, 3333-01-01
 
 
 

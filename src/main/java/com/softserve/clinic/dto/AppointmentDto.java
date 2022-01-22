@@ -16,7 +16,6 @@ public class AppointmentDto implements Serializable {
     @Future @NotNull (message = "Date and Time may not be null")
     LocalDateTime dateAndTime;
 
-    @NotNull (message = "Doctor may not be null")
     DoctorDto doctor;
 
     PatientDto patient;

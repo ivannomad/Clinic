@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserve.clinic.dto.AppointmentDto;
 import com.softserve.clinic.dto.DoctorDto;
 import com.softserve.clinic.service.DoctorService;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
@@ -36,18 +36,13 @@ class DoctorControllerTest {
     private DoctorService doctorService;
 
     @MockBean
-    private DoctorDto doctorDto;
-
-    @MockBean
     private AppointmentDto appointmentDto;
 
     // Doctor
+    private static DoctorDto doctorDto;
     private static final UUID DOCTOR_ID = UUID.randomUUID();
-    private static final String USERNAME = "ivannomad";
-    private static final String PASSWORD = "password";
     private static final String FIRST_NAME = "Ivan";
     private static final String SECOND_NAME = "Ivanov";
-    private static final String EMAIL = "ivan@mail.com";
     private static final String CONTACT_NUMBER = "380501112233";
 
     // Appointment
@@ -55,10 +50,10 @@ class DoctorControllerTest {
     private static final LocalDateTime FUTURE_DATE_AND_TIME = LocalDateTime.now().plusDays(1);
     private static final LocalDateTime PAST_DATE_AND_TIME = LocalDateTime.now().minusDays(1);
 
-    @BeforeEach
-    void init() {
+    @BeforeAll
+    static void init() {
         doctorDto = new DoctorDto(
-                DOCTOR_ID, USERNAME, PASSWORD, FIRST_NAME, SECOND_NAME, EMAIL, CONTACT_NUMBER);
+                DOCTOR_ID, FIRST_NAME, SECOND_NAME, CONTACT_NUMBER);
     }
 
     @Test
@@ -72,11 +67,8 @@ class DoctorControllerTest {
                         status().isOk(),
                         content().contentType(MediaType.APPLICATION_JSON),
                         jsonPath("$[0].id").isNotEmpty(),
-                        jsonPath("$[0].username").value(USERNAME),
-                        jsonPath("$[0].password").value(PASSWORD),
                         jsonPath("$[0].firstName").value(FIRST_NAME),
                         jsonPath("$[0].secondName").value(SECOND_NAME),
-                        jsonPath("$[0].email").value(EMAIL),
                         jsonPath("$[0].contactNumber").value(CONTACT_NUMBER)
                 );
     }
@@ -90,11 +82,8 @@ class DoctorControllerTest {
                         status().isOk(),
                         content().contentType(MediaType.APPLICATION_JSON),
                         jsonPath("$.id").isNotEmpty(),
-                        jsonPath("$.username").value(USERNAME),
-                        jsonPath("$.password").value(PASSWORD),
                         jsonPath("$.firstName").value(FIRST_NAME),
                         jsonPath("$.secondName").value(SECOND_NAME),
-                        jsonPath("$.email").value(EMAIL),
                         jsonPath("$.contactNumber").value(CONTACT_NUMBER)
                 );
     }
@@ -110,13 +99,25 @@ class DoctorControllerTest {
     @ParameterizedTest(name = "{index} argument validation")
     @CsvFileSource(resources = "/doctors.csv")
     void creatingFailsWhenDoctorDataIsNotValid(ArgumentsAccessor accessor) throws Exception {
-        DoctorDto doctorDto = new DoctorDto(DOCTOR_ID,
-                accessor.getString(0),
+        DoctorDto doctorDto = new DoctorDto(
+                UUID.fromString(accessor.getString(0)),
                 accessor.getString(1),
                 accessor.getString(2),
-                accessor.getString(3),
-                accessor.getString(4),
-                accessor.getString(5));
+                accessor.getString(3));
+
+        mockMvc.perform(post("/doctors")
+                        .content(objectMapper.writeValueAsString(doctorDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void creatingFailsWhenDoctorIdIsNull() throws Exception {
+        DoctorDto doctorDto = new DoctorDto(
+                null,
+                FIRST_NAME,
+                SECOND_NAME,
+                CONTACT_NUMBER);
 
         mockMvc.perform(post("/doctors")
                         .content(objectMapper.writeValueAsString(doctorDto))
@@ -135,13 +136,25 @@ class DoctorControllerTest {
     @ParameterizedTest(name = "{index} argument validation")
     @CsvFileSource(resources = "/doctors.csv")
     void updatingFailsWhenDoctorsDataIsNotValid(ArgumentsAccessor accessor) throws Exception {
-        DoctorDto doctorDto = new DoctorDto(DOCTOR_ID,
-                accessor.getString(0),
+        DoctorDto doctorDto = new DoctorDto(
+                UUID.fromString(accessor.getString(0)),
                 accessor.getString(1),
                 accessor.getString(2),
-                accessor.getString(3),
-                accessor.getString(4),
-                accessor.getString(5));
+                accessor.getString(3));
+
+        mockMvc.perform(put("/doctors/{doctorId}", DOCTOR_ID)
+                        .content(objectMapper.writeValueAsString(doctorDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void updatingFailsWhenDoctorIdIsNull() throws Exception {
+        DoctorDto doctorDto = new DoctorDto(
+                null,
+                FIRST_NAME,
+                SECOND_NAME,
+                CONTACT_NUMBER);
 
         mockMvc.perform(put("/doctors/{doctorId}", DOCTOR_ID)
                         .content(objectMapper.writeValueAsString(doctorDto))
@@ -189,18 +202,7 @@ class DoctorControllerTest {
     }
 
     @Test
-    void creatingFailsWhenAppointmentsDoctorIsNull() throws Exception {
-        AppointmentDto appointmentDto = new AppointmentDto(
-                APPOINTMENT_ID, FUTURE_DATE_AND_TIME, null, null);
-
-        mockMvc.perform(post("/doctors/{doctorId}/appointments", DOCTOR_ID)
-                        .content(objectMapper.writeValueAsString(appointmentDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    void getFreeDoctorAppointments() throws Exception {
+    void shouldGetFreeDoctorAppointments() throws Exception {
         List<AppointmentDto> appointmentDtoList = List.of(appointmentDto);
 
         when(doctorService.getDoctorFreeAppointments(DOCTOR_ID)).thenReturn(appointmentDtoList);
@@ -210,7 +212,7 @@ class DoctorControllerTest {
     }
 
     @Test
-    void getDoctorAppointments() throws Exception {
+    void shouldGetDoctorAppointments() throws Exception {
         List<AppointmentDto> appointmentDtoList = List.of(appointmentDto);
 
         when(doctorService.getDoctorAppointments(DOCTOR_ID)).thenReturn(appointmentDtoList);

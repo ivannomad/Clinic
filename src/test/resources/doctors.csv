@@ -1,10 +1,6 @@
-, password, firstName, secondName, email@gmail.com, contactNumber
-username, , firstName, secondName, email@gmail.com, contactNumber
-username, password, , secondName, email@gmail.com, contactNumber
-username, password, firstName, , email@gmail.com, contactNumber
-username, password, firstName, secondName, , contactNumber
-username, password, firstName, secondName, email@gmail.com,
-username, password, firstName, secondName, email, contactNumber
+dc11cf11-c77c-4db0-88e8-ba0f2cb20060, , secondName, contactNumber
+dc11cf11-c77c-4db0-88e8-ba0f2cb20060, firstName, , contactNumber
+dc11cf11-c77c-4db0-88e8-ba0f2cb20060, firstName, secondName, ,
 
 
 

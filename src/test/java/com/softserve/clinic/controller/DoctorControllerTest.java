@@ -207,7 +207,7 @@ class DoctorControllerTest {
 
         when(doctorService.getDoctorFreeAppointments(DOCTOR_ID)).thenReturn(appointmentDtoList);
 
-        mockMvc.perform(get("/doctors/{doctorId}/appointments/free", DOCTOR_ID))
+        mockMvc.perform(get("/doctors/{doctorId}/appointments?free=true", DOCTOR_ID))
                 .andExpect(status().isOk());
     }
 
@@ -217,7 +217,7 @@ class DoctorControllerTest {
 
         when(doctorService.getDoctorAppointments(DOCTOR_ID)).thenReturn(appointmentDtoList);
 
-        mockMvc.perform(get("/doctors/{doctorId}/appointments/not-free", DOCTOR_ID))
+        mockMvc.perform(get("/doctors/{doctorId}/appointments?free=false", DOCTOR_ID))
                 .andExpect(status().isOk());
     }
 }

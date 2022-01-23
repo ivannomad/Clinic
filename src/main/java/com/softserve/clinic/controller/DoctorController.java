@@ -56,13 +56,12 @@ public class DoctorController {
         return new ResponseEntity<>(newAppointment, HttpStatus.CREATED);
     }
 
-    @GetMapping("/{doctorId}/appointments/free")
-    public List<AppointmentDto> getFreeDoctorAppointments(@PathVariable UUID doctorId) {
-        return doctorService.getDoctorFreeAppointments(doctorId);
-    }
-
-    @GetMapping("/{doctorId}/appointments/not-free")
-    public List<AppointmentDto> getDoctorAppointments(@PathVariable UUID doctorId) {
+    @GetMapping("/{doctorId}/appointments")
+    public List<AppointmentDto> getFreeDoctorAppointments(@PathVariable UUID doctorId, @RequestParam(name = "free") boolean appointmentIsFree) {
+        if (appointmentIsFree) {
+            return doctorService.getDoctorFreeAppointments(doctorId);
+        }
         return doctorService.getDoctorAppointments(doctorId);
     }
+
 }

@@ -19,6 +19,7 @@ public class SpecializationController {
 
     @GetMapping
     public List<SpecializationDto> getAllSpecializations() {
+
         return specializationService.getAllSpecializations();
     }
 
@@ -41,6 +42,7 @@ public class SpecializationController {
     @DeleteMapping("/{specId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteSpecialization(@PathVariable UUID specId) {
+
         specializationService.deleteSpecialization(specId);
     }
 

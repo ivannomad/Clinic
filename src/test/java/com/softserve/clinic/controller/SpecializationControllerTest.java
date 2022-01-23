@@ -42,7 +42,7 @@ class SpecializationControllerTest {
                         content().contentType(MediaType.APPLICATION_JSON),
                         jsonPath("$[0].id").isNotEmpty(),
                         jsonPath("$[0].name").value(NAME),
-                        jsonPath("$[0].description").isString()
+                        jsonPath("$[0].description").value(DESCRIPTION)
                 );
     }
 
@@ -58,7 +58,7 @@ class SpecializationControllerTest {
                         content().contentType(MediaType.APPLICATION_JSON),
                         jsonPath("$.id").isNotEmpty(),
                         jsonPath("$.name").value(NAME),
-                        jsonPath("$.description").isString()
+                        jsonPath("$.description").value(DESCRIPTION)
                 );
     }
 
@@ -83,12 +83,13 @@ class SpecializationControllerTest {
     void creatingFailsWhenSpecializationNameNotGiven() throws Exception {
         mockMvc.perform(post("/specializations")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\"}"))
+                        .content("{\"name\":,"+
+                                "\"description\":\"Description\"}"))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    void shouldUpdateSpecialization() throws Exception {
+    void shouldUpdateSpecializationById() throws Exception {
         mockMvc.perform(put("/specializations/{specId}", ID)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"name\" : \"Surgeon\"," +
@@ -100,7 +101,8 @@ class SpecializationControllerTest {
     void updatingFailsWhenSpecializationNameNotGiven() throws Exception {
         mockMvc.perform(put("/specializations/{specId}", ID)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"\"}"))
+                        .content("{\"name\":\"Surgeon\"},"+
+                                "{\"description\":}"))
                 .andExpect(status().isBadRequest());
     }
 

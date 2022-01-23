@@ -13,7 +13,7 @@ public interface SpecializationService {
 
     SpecializationDto getSpecializationByName(String specName);
 
-    void createSpecialization(SpecializationDto specializationDto);
+    void  createSpecialization(SpecializationDto specializationDto);
 
     void updateSpecialization(SpecializationDto specializationDto, UUID specId);
 

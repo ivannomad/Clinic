@@ -22,7 +22,8 @@ public class SpecializationServiceImpl implements SpecializationService {
 
     @Override
     public List<SpecializationDto> getAllSpecializations() {
-        return specializationRepository.findAll().stream()
+        return specializationRepository.findAll()
+                .stream()
                 .map(specializationMapper::specToSpecDto)
                 .collect(Collectors.toList());
     }
@@ -38,13 +39,13 @@ public class SpecializationServiceImpl implements SpecializationService {
     public SpecializationDto getSpecializationByName(String specName) {
         return specializationRepository.findByName(specName)
                 .map(specializationMapper::specToSpecDto)
-                .orElseThrow(() -> new EntityNotFoundException("Could not find specialization " + specName));
+                .orElseThrow(() -> new EntityNotFoundException("Could not find specialization by name " + specName));
     }
 
     @Override
     public void createSpecialization(SpecializationDto specializationDto) {
-        Specialization specialization = specializationMapper.specDtoToSpec(specializationDto);
-        specializationRepository.save(specialization);
+        Specialization spec = specializationMapper.specDtoToSpec(specializationDto);
+        specializationRepository.save(spec);
     }
 
     @Override
@@ -60,7 +61,7 @@ public class SpecializationServiceImpl implements SpecializationService {
         if (specializationRepository.existsById(specId)) {
             specializationRepository.deleteById(specId);
         } else {
-            throw new EntityNotFoundException("Could not find specialization " + specId);
+            throw new EntityNotFoundException("Could not find specialization with this id " + specId);
         }
     }
 }

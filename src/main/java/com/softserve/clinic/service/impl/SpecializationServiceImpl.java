@@ -43,17 +43,21 @@ public class SpecializationServiceImpl implements SpecializationService {
     }
 
     @Override
-    public void createSpecialization(SpecializationDto specializationDto) {
+    public SpecializationDto createSpecialization(SpecializationDto specializationDto) {
         Specialization spec = specializationMapper.specDtoToSpec(specializationDto);
         specializationRepository.save(spec);
+
+        return specializationMapper.specToSpecDto(spec);
     }
 
     @Override
-    public void updateSpecialization(SpecializationDto specializationDto, UUID specId) {
+    public SpecializationDto updateSpecialization(SpecializationDto specializationDto, UUID specId) {
         Specialization specialization = specializationRepository.findById(specId).orElseThrow(
                 () -> new EntityNotFoundException("Could not find specialization " + specId));
         specializationMapper.updateSpecializationFromSpecializationDto(specializationDto, specialization);
         specializationRepository.save(specialization);
+
+        return specializationMapper.specToSpecDto(specialization);
     }
 
     @Override

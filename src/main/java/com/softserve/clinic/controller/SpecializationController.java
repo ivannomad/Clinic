@@ -1,9 +1,11 @@
 package com.softserve.clinic.controller;
 
 import com.softserve.clinic.dto.SpecializationDto;
+import com.softserve.clinic.model.Specialization;
 import com.softserve.clinic.service.SpecializationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,14 +31,17 @@ public class SpecializationController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public void createSpecialization(@RequestBody @Valid SpecializationDto specializationDto) {
-        specializationService.createSpecialization(specializationDto);
+    public ResponseEntity<SpecializationDto> createSpecialization(@RequestBody @Valid SpecializationDto specializationDto) {
+        SpecializationDto newSpecDto = specializationService.createSpecialization(specializationDto);
+
+        return new ResponseEntity<>(newSpecDto, HttpStatus.CREATED);
     }
 
     @PutMapping("/{specId}")
-    public void updateSpecialization(@RequestBody @Valid SpecializationDto specializationDto, @PathVariable UUID specId) {
-        specializationService.updateSpecialization(specializationDto, specId);
+    public ResponseEntity<SpecializationDto> updateSpecialization(@RequestBody @Valid SpecializationDto specializationDto, @PathVariable UUID specId) {
+        SpecializationDto updatedSpecDto = specializationService.updateSpecialization(specializationDto, specId);
+
+        return new ResponseEntity<>(updatedSpecDto, HttpStatus.OK);
     }
 
     @DeleteMapping("/{specId}")

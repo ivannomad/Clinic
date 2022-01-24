@@ -1,8 +1,13 @@
 package com.softserve.clinic.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.softserve.clinic.dto.SpecializationDto;
 import com.softserve.clinic.service.SpecializationService;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
+import org.junit.jupiter.params.provider.CsvFileSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -20,19 +25,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(SpecializationController.class)
 class SpecializationControllerTest {
 
-    @MockBean
-    private SpecializationService specializationService;
-
     @Autowired
     private MockMvc mockMvc;
 
-    private static final UUID ID = UUID.randomUUID();
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private SpecializationService specializationService;
+
+    private static SpecializationDto specDto;
+    private static final UUID SPEC_ID = UUID.randomUUID();
     private static final String NAME = "Surgeon";
     private static final String DESCRIPTION = "Description";
 
+    @BeforeAll
+    static void init() {
+        specDto = new SpecializationDto(SPEC_ID, NAME, DESCRIPTION);
+    }
+
     @Test
     void shouldGetAllSpecializations() throws Exception {
-        List<SpecializationDto> specializationDtoList = List.of(new SpecializationDto(ID, NAME, DESCRIPTION));
+        List<SpecializationDto> specializationDtoList = List.of(new SpecializationDto(SPEC_ID, NAME, DESCRIPTION));
 
         when(specializationService.getAllSpecializations()).thenReturn(specializationDtoList);
 
@@ -48,7 +62,7 @@ class SpecializationControllerTest {
 
     @Test
     void shouldGetSpecializationByName() throws Exception {
-        SpecializationDto specializationDto = new SpecializationDto(ID, NAME, DESCRIPTION);
+        SpecializationDto specializationDto = new SpecializationDto(SPEC_ID, NAME, DESCRIPTION);
 
         when(specializationService.getSpecializationByName(NAME)).thenReturn(specializationDto);
 
@@ -73,43 +87,71 @@ class SpecializationControllerTest {
     @Test
     void shouldCreateSpecialization() throws Exception {
         mockMvc.perform(post("/specializations")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\" : \"Surgeon\"," +
-                                "\"description\":\"Description\"}"))
+                        .content(objectMapper.writeValueAsString(specDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
     }
 
     @Test
-    void creatingFailsWhenSpecializationNameNotGiven() throws Exception {
+    void creatingFailsWhenSpecializationIdIsNull() throws Exception {
+        SpecializationDto specDto = new SpecializationDto(null, NAME, DESCRIPTION);
+
         mockMvc.perform(post("/specializations")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":,"+
-                                "\"description\":\"Description\"}"))
+                        .content(objectMapper.writeValueAsString(specDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @ParameterizedTest(name = "{index} argument validation")
+    @CsvFileSource(resources = "/specialization.csv")
+    void creatingFailsWhenSpecializationDataIsNotValid(ArgumentsAccessor accessor) throws Exception {
+        SpecializationDto specDto = new SpecializationDto(
+                UUID.fromString(accessor.getString(0)),
+                accessor.getString(1),
+                accessor.getString(2));
+
+        mockMvc.perform(post("/specializations")
+                        .content(objectMapper.writeValueAsString(specDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void shouldUpdateSpecializationById() throws Exception {
-        mockMvc.perform(put("/specializations/{specId}", ID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\" : \"Surgeon\"," +
-                                 "\"description\":\"Description\"}"))
+        mockMvc.perform(put("/specializations/{specId}", SPEC_ID)
+                        .content(objectMapper.writeValueAsString(specDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }
 
     @Test
-    void updatingFailsWhenSpecializationNameNotGiven() throws Exception {
-        mockMvc.perform(put("/specializations/{specId}", ID)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Surgeon\"},"+
-                                "{\"description\":}"))
+    void updatingFailsWhenSpecializationIdIsNull() throws Exception {
+        SpecializationDto specDto = new SpecializationDto(null, NAME, DESCRIPTION);
+
+        mockMvc.perform(put("/specializations/{specId}", SPEC_ID)
+                        .content(objectMapper.writeValueAsString(specDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @ParameterizedTest(name = "{index} argument validation")
+    @CsvFileSource(resources = "/specialization.csv")
+    void updatingFailsWhenSpecializationDataIsNotValid(ArgumentsAccessor accessor) throws Exception {
+        SpecializationDto specDto = new SpecializationDto(
+                UUID.fromString(accessor.getString(0)),
+                accessor.getString(1),
+                accessor.getString(2));
+
+        mockMvc.perform(put("/specializations/{specId}", SPEC_ID)
+                        .content(objectMapper.writeValueAsString(specDto))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
 
     @Test
     void shouldDeleteSpecialization() throws Exception {
-        mockMvc.perform(delete("/specializations/{specId}", ID))
+        mockMvc.perform(delete("/specializations/{specId}", SPEC_ID))
                 .andExpect(status().isNoContent());
     }
 }

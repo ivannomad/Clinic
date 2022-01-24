@@ -13,9 +13,9 @@ public interface SpecializationService {
 
     SpecializationDto getSpecializationByName(String specName);
 
-    void  createSpecialization(SpecializationDto specializationDto);
+    SpecializationDto createSpecialization(SpecializationDto specializationDto);
 
-    void updateSpecialization(SpecializationDto specializationDto, UUID specId);
+    SpecializationDto updateSpecialization(SpecializationDto specializationDto, UUID specId);
 
     void deleteSpecialization(UUID specId);
 
